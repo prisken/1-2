@@ -1,10 +1,9 @@
 import sgMail from '@sendgrid/mail'
 
-if (!process.env.SENDGRID_API_KEY) {
-  throw new Error('SENDGRID_API_KEY is not set')
+// Only initialize SendGrid if API key is available (not during build)
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 }
-
-sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 export interface EmailTemplate {
   to: string
@@ -14,6 +13,12 @@ export interface EmailTemplate {
 }
 
 export async function sendEmail(template: EmailTemplate): Promise<void> {
+  // Skip email sending if SendGrid is not configured (e.g., during build)
+  if (!process.env.SENDGRID_API_KEY) {
+    console.log('SendGrid not configured, skipping email send:', template.subject)
+    return
+  }
+
   const msg = {
     to: template.to,
     from: process.env.FROM_EMAIL || 'noreply@halfdrinks.com',

@@ -1,14 +1,13 @@
 import { v2 as cloudinary } from 'cloudinary'
 
-if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-  throw new Error('Cloudinary configuration is missing')
+// Only configure Cloudinary if environment variables are available (not during build)
+if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  })
 }
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
 
 export { cloudinary }
 
@@ -20,6 +19,15 @@ export async function uploadImage(
     transformation?: any
   } = {}
 ): Promise<{ secure_url: string; public_id: string }> {
+  // Skip upload if Cloudinary is not configured (e.g., during build)
+  if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+    console.log('Cloudinary not configured, skipping image upload')
+    return {
+      secure_url: '/images/placeholder-drink.jpg',
+      public_id: 'placeholder'
+    }
+  }
+
   try {
     const result = await cloudinary.uploader.upload(file as string, {
       folder: options.folder || 'half-drinks',
