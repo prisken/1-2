@@ -1,8 +1,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useCart } from '@/components/providers/CartProvider'
-import { useAuth } from '@/components/providers/AuthProvider'
+// import { useCart } from '@/components/providers/CartProvider'
+// import { useAuth } from '@/components/providers/AuthProvider'
 import toast from 'react-hot-toast'
 
 interface CustomDrink {
@@ -58,8 +58,10 @@ export default function CustomDrinkPage() {
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
   const [isSaving, setIsSaving] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const { addItem } = useCart()
-  const { user } = useAuth()
+  // const { addItem } = useCart()
+  // const { user } = useAuth()
+  const addItem = () => {}
+  const user = null
 
   useEffect(() => {
     updateDrinkVisualization()

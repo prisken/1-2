@@ -15,9 +15,9 @@ import {
   ArrowPathIcon
 } from '@heroicons/react/24/solid'
 import { HeartIcon as HeartOutlineIcon } from '@heroicons/react/24/outline'
-import { useCart } from '@/components/providers/CartProvider'
-import ProductReviews from '@/components/products/ProductReviews'
-import RelatedProducts from '@/components/products/RelatedProducts'
+// import { useCart } from '@/components/providers/CartProvider'
+// import ProductReviews from '@/components/products/ProductReviews'
+// import RelatedProducts from '@/components/products/RelatedProducts'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import toast from 'react-hot-toast'
 
@@ -56,7 +56,8 @@ export default function ProductPage() {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   
-  const { addItem } = useCart()
+  // const { addItem } = useCart()
+  const addItem = () => {}
 
   useEffect(() => {
     if (slug) {
