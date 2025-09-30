@@ -16,7 +16,7 @@
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate",
     "railway:build": "prisma generate && next build",
-    "railway:start": "prisma migrate deploy && next start"
+    "railway:start": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
