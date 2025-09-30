@@ -136,7 +136,7 @@ export async function GET(req: NextRequest) {
           page: 1,
           limit: 12,
           total: sampleProducts.length,
-          pages: 1
+          totalPages: 1
         }
       })
     }
@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
         page,
         limit,
         total,
-        pages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit)
       }
     })
   } catch (error) {
@@ -199,7 +199,7 @@ export async function GET(req: NextRequest) {
         page: 1,
         limit: 12,
         total: sampleProducts.length,
-        pages: 1
+        totalPages: 1
       }
     })
   }
