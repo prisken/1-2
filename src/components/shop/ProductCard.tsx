@@ -39,7 +39,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         name: product.name,
         price: product.price,
         quantity: 1,
-        image: product.images?.[0] || '/images/placeholder-drink.jpg',
+        image: product.images?.[0] || '/images/placeholder-drink.svg',
       })
       toast.success(`${product.name} added to cart!`)
     } catch (error) {
@@ -64,7 +64,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="relative h-64 overflow-hidden">
         <Link href={`/products/${product.slug}`}>
           <Image
-            src={product.images?.[0] || '/images/placeholder-drink.jpg'}
+            src={product.images?.[0] || '/images/placeholder-drink.svg'}
             alt={product.name}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
