@@ -65,14 +65,29 @@ export default function ShopPage() {
         ...filters
       })
 
-      const response = await fetch(`/api/products?${params}`)
+      console.log('🔍 DEBUG: Fetching products with params:', params.toString())
+      const url = `/api/products?${params}`
+      console.log('🔍 DEBUG: Full URL:', url)
+      
+      const response = await fetch(url)
+      console.log('🔍 DEBUG: Response status:', response.status)
+      console.log('🔍 DEBUG: Response ok:', response.ok)
+      
       if (response.ok) {
         const data = await response.json()
-        setProducts(data.products)
-        setPagination(data.pagination)
+        console.log('🔍 DEBUG: Response data:', data)
+        console.log('🔍 DEBUG: Products array length:', data.products?.length)
+        console.log('🔍 DEBUG: Pagination data:', data.pagination)
+        
+        setProducts(data.products || [])
+        setPagination(data.pagination || { page: 1, limit: 12, total: 0, totalPages: 0, hasNext: false, hasPrev: false })
+      } else {
+        console.error('🔍 DEBUG: Response not ok, status:', response.status)
+        const errorText = await response.text()
+        console.error('🔍 DEBUG: Error response:', errorText)
       }
     } catch (error) {
-      console.error('Failed to fetch products:', error)
+      console.error('🔍 DEBUG: Fetch error:', error)
     } finally {
       setLoading(false)
     }

@@ -4,6 +4,9 @@ import { prisma } from '@/lib/db'
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: NextRequest) {
+  console.log('🔍 DEBUG: API /products called')
+  console.log('🔍 DEBUG: Request URL:', req.url)
+  
   try {
     const { searchParams } = new URL(req.url)
     const page = parseInt(searchParams.get('page') || '1')
@@ -11,6 +14,8 @@ export async function GET(req: NextRequest) {
     const category = searchParams.get('category')
     const search = searchParams.get('search')
     const sort = searchParams.get('sort') || 'name'
+
+    console.log('🔍 DEBUG: Parsed params:', { page, limit, category, search, sort })
 
     const skip = (page - 1) * limit
 
@@ -27,6 +32,8 @@ export async function GET(req: NextRequest) {
       ]
     }
 
+    console.log('🔍 DEBUG: Querying database with whereClause:', whereClause)
+    
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where: whereClause,
@@ -43,6 +50,8 @@ export async function GET(req: NextRequest) {
       }),
       prisma.product.count({ where: whereClause })
     ])
+    
+    console.log('🔍 DEBUG: Database query results:', { productsCount: products.length, total })
 
     // Calculate average ratings
     const productsWithRatings = products.map(product => ({
@@ -54,7 +63,9 @@ export async function GET(req: NextRequest) {
     }))
 
     // If no products found in database, return sample products
+    console.log('🔍 DEBUG: Products with ratings length:', productsWithRatings.length)
     if (productsWithRatings.length === 0) {
+      console.log('🔍 DEBUG: No products found, returning sample products')
       const sampleProducts = [
         {
           id: '1',
@@ -130,7 +141,7 @@ export async function GET(req: NextRequest) {
         }
       ]
 
-      return NextResponse.json({
+      const response = {
         products: sampleProducts,
         pagination: {
           page: 1,
@@ -138,7 +149,9 @@ export async function GET(req: NextRequest) {
           total: sampleProducts.length,
           totalPages: 1
         }
-      })
+      }
+      console.log('🔍 DEBUG: Returning sample products response:', response)
+      return NextResponse.json(response)
     }
 
     return NextResponse.json({
