@@ -144,7 +144,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Tags */}
-        {product.tags.length > 0 && (
+        {product.tags && product.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-4">
             {product.tags.slice(0, 3).map((tag) => (
               <span

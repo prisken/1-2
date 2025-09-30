@@ -77,7 +77,8 @@ export async function GET(req: NextRequest) {
           inStock: true,
           averageRating: 4.5,
           reviewCount: 12,
-          slug: 'strawberry-vanilla-delight'
+          slug: 'strawberry-vanilla-delight',
+          tags: ['Antioxidants', 'Low Sugar', 'Organic']
         },
         {
           id: '2',
@@ -89,7 +90,8 @@ export async function GET(req: NextRequest) {
           inStock: true,
           averageRating: 4.8,
           reviewCount: 8,
-          slug: 'mango-coconut-bliss'
+          slug: 'mango-coconut-bliss',
+          tags: ['Vitamins', 'Dairy Free', 'Vegan']
         },
         {
           id: '3',
@@ -101,7 +103,8 @@ export async function GET(req: NextRequest) {
           inStock: true,
           averageRating: 4.3,
           reviewCount: 15,
-          slug: 'blueberry-almond-dream'
+          slug: 'blueberry-almond-dream',
+          tags: ['Antioxidants', 'Protein', 'Gluten Free']
         },
         {
           id: '4',
@@ -113,7 +116,8 @@ export async function GET(req: NextRequest) {
           inStock: true,
           averageRating: 4.2,
           reviewCount: 9,
-          slug: 'green-energy-boost'
+          slug: 'green-energy-boost',
+          tags: ['Vitamins', 'Low Sugar', 'Organic']
         },
         {
           id: '5',
@@ -125,7 +129,8 @@ export async function GET(req: NextRequest) {
           inStock: true,
           averageRating: 4.6,
           reviewCount: 11,
-          slug: 'chocolate-banana-smoothie'
+          slug: 'chocolate-banana-smoothie',
+          tags: ['Protein', 'Dairy Free', 'Vegan']
         },
         {
           id: '6',
@@ -137,7 +142,8 @@ export async function GET(req: NextRequest) {
           inStock: true,
           averageRating: 4.7,
           reviewCount: 7,
-          slug: 'tropical-paradise'
+          slug: 'tropical-paradise',
+          tags: ['Vitamins', 'Low Sugar', 'Gluten Free']
         }
       ]
 
