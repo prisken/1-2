@@ -1,0 +1,427 @@
+'use client'
+
+import { useState, useRef, useEffect } from 'react'
+import { useCart } from '@/components/providers/CartProvider'
+import { useAuth } from '@/components/providers/AuthProvider'
+import toast from 'react-hot-toast'
+
+interface CustomDrink {
+  name: string
+  baseFlavor: string
+  topFlavor: string
+  colors: {
+    top: string
+    bottom: string
+  }
+  ingredients: string[]
+  price: number
+}
+
+const baseFlavors = [
+  { id: 'vanilla', name: 'Vanilla', color: '#F5F5DC', price: 0 },
+  { id: 'chocolate', name: 'Chocolate', color: '#8B4513', price: 1 },
+  { id: 'strawberry', name: 'Strawberry', color: '#FF69B4', price: 0.5 },
+  { id: 'mango', name: 'Mango', color: '#FFA500', price: 0.5 },
+  { id: 'coconut', name: 'Coconut', color: '#F0F8FF', price: 1 },
+]
+
+const topFlavors = [
+  { id: 'blueberry', name: 'Blueberry', color: '#4169E1', price: 0.5 },
+  { id: 'raspberry', name: 'Raspberry', color: '#DC143C', price: 0.5 },
+  { id: 'matcha', name: 'Matcha', color: '#90EE90', price: 1 },
+  { id: 'lavender', name: 'Lavender', color: '#E6E6FA', price: 1.5 },
+  { id: 'turmeric', name: 'Turmeric', color: '#FFD700', price: 1 },
+]
+
+const addOns = [
+  { id: 'protein', name: 'Protein Powder', price: 2 },
+  { id: 'collagen', name: 'Collagen', price: 3 },
+  { id: 'chia', name: 'Chia Seeds', price: 1 },
+  { id: 'spirulina', name: 'Spirulina', price: 2 },
+  { id: 'ginger', name: 'Fresh Ginger', price: 0.5 },
+  { id: 'mint', name: 'Fresh Mint', price: 0.5 },
+]
+
+export default function CustomDrinkPage() {
+  const [customDrink, setCustomDrink] = useState<CustomDrink>({
+    name: '',
+    baseFlavor: 'vanilla',
+    topFlavor: 'blueberry',
+    colors: {
+      top: '#4169E1',
+      bottom: '#F5F5DC',
+    },
+    ingredients: [],
+    price: 8.99,
+  })
+  
+  const [selectedAddOns, setSelectedAddOns] = useState<string[]>([])
+  const [isSaving, setIsSaving] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { addItem } = useCart()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    updateDrinkVisualization()
+  }, [customDrink])
+
+  const updateDrinkVisualization = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    // Draw glass outline
+    ctx.strokeStyle = '#333'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.moveTo(50, 50)
+    ctx.lineTo(50, 300)
+    ctx.lineTo(150, 300)
+    ctx.lineTo(150, 50)
+    ctx.stroke()
+
+    // Draw bottom layer (base flavor)
+    const baseFlavorData = baseFlavors.find(f => f.id === customDrink.baseFlavor)
+    if (baseFlavorData) {
+      ctx.fillStyle = baseFlavorData.color
+      ctx.fillRect(55, 200, 90, 95)
+    }
+
+    // Draw top layer (top flavor)
+    const topFlavorData = topFlavors.find(f => f.id === customDrink.topFlavor)
+    if (topFlavorData) {
+      ctx.fillStyle = topFlavorData.color
+      ctx.fillRect(55, 55, 90, 145)
+    }
+
+    // Add gradient effect
+    const gradient = ctx.createLinearGradient(55, 55, 145, 300)
+    gradient.addColorStop(0, topFlavorData?.color || '#4169E1')
+    gradient.addColorStop(0.5, 'rgba(255,255,255,0.3)')
+    gradient.addColorStop(1, baseFlavorData?.color || '#F5F5DC')
+    
+    ctx.fillStyle = gradient
+    ctx.fillRect(55, 55, 90, 240)
+  }
+
+  const handleBaseFlavorChange = (flavorId: string) => {
+    const flavor = baseFlavors.find(f => f.id === flavorId)
+    if (flavor) {
+      setCustomDrink(prev => ({
+        ...prev,
+        baseFlavor: flavorId,
+        colors: {
+          ...prev.colors,
+          bottom: flavor.color,
+        },
+        price: prev.price - (baseFlavors.find(f => f.id === prev.baseFlavor)?.price || 0) + flavor.price,
+      }))
+    }
+  }
+
+  const handleTopFlavorChange = (flavorId: string) => {
+    const flavor = topFlavors.find(f => f.id === flavorId)
+    if (flavor) {
+      setCustomDrink(prev => ({
+        ...prev,
+        topFlavor: flavorId,
+        colors: {
+          ...prev.colors,
+          top: flavor.color,
+        },
+        price: prev.price - (topFlavors.find(f => f.id === prev.topFlavor)?.price || 0) + flavor.price,
+      }))
+    }
+  }
+
+  const handleAddOnToggle = (addOnId: string) => {
+    const addOn = addOns.find(a => a.id === addOnId)
+    if (!addOn) return
+
+    setSelectedAddOns(prev => {
+      const isSelected = prev.includes(addOnId)
+      const newSelected = isSelected 
+        ? prev.filter(id => id !== addOnId)
+        : [...prev, addOnId]
+      
+      // Update price
+      setCustomDrink(prevDrink => ({
+        ...prevDrink,
+        price: prevDrink.price + (isSelected ? -addOn.price : addOn.price),
+      }))
+      
+      return newSelected
+    })
+  }
+
+  const calculateTotalPrice = () => {
+    const basePrice = 8.99
+    const baseFlavorPrice = baseFlavors.find(f => f.id === customDrink.baseFlavor)?.price || 0
+    const topFlavorPrice = topFlavors.find(f => f.id === customDrink.topFlavor)?.price || 0
+    const addOnsPrice = selectedAddOns.reduce((total, addOnId) => {
+      const addOn = addOns.find(a => a.id === addOnId)
+      return total + (addOn?.price || 0)
+    }, 0)
+    
+    return basePrice + baseFlavorPrice + topFlavorPrice + addOnsPrice
+  }
+
+  const handleSaveAndAddToCart = async () => {
+    if (!user) {
+      toast.error('Please sign in to save custom drinks')
+      return
+    }
+
+    if (!customDrink.name.trim()) {
+      toast.error('Please give your custom drink a name')
+      return
+    }
+
+    setIsSaving(true)
+    try {
+      // In a real implementation, you would save to the database
+      const customDrinkData = {
+        name: customDrink.name,
+        baseFlavor: customDrink.baseFlavor,
+        topFlavor: customDrink.topFlavor,
+        colors: customDrink.colors,
+        ingredients: [
+          baseFlavors.find(f => f.id === customDrink.baseFlavor)?.name || '',
+          topFlavors.find(f => f.id === customDrink.topFlavor)?.name || '',
+          ...selectedAddOns.map(id => addOns.find(a => a.id === id)?.name || ''),
+        ].filter(Boolean),
+        price: calculateTotalPrice(),
+      }
+
+      addItem({
+        customDrinkId: `custom-${Date.now()}`,
+        name: customDrinkData.name,
+        price: customDrinkData.price,
+        quantity: 1,
+        image: '/images/custom-drink.jpg',
+      })
+
+      toast.success('Custom drink added to cart!')
+    } catch (error) {
+      toast.error('Failed to save custom drink')
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            Create Your Perfect Drink
+          </h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Design a unique two-tone beverage that reflects your personal taste and style
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Customization Panel */}
+          <div className="space-y-8">
+            {/* Drink Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Name Your Creation
+              </label>
+              <input
+                type="text"
+                value={customDrink.name}
+                onChange={(e) => setCustomDrink(prev => ({ ...prev, name: e.target.value }))}
+                placeholder="e.g., My Tropical Paradise"
+                className="input w-full"
+              />
+            </div>
+
+            {/* Base Flavor */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Choose Base Flavor</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {baseFlavors.map((flavor) => (
+                  <button
+                    key={flavor.id}
+                    onClick={() => handleBaseFlavorChange(flavor.id)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      customDrink.baseFlavor === flavor.id
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div
+                      className="w-full h-8 rounded mb-2"
+                      style={{ backgroundColor: flavor.color }}
+                    />
+                    <div className="text-sm font-medium text-gray-900">{flavor.name}</div>
+                    {flavor.price > 0 && (
+                      <div className="text-xs text-gray-500">+${flavor.price}</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Top Flavor */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Choose Top Flavor</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {topFlavors.map((flavor) => (
+                  <button
+                    key={flavor.id}
+                    onClick={() => handleTopFlavorChange(flavor.id)}
+                    className={`p-4 rounded-lg border-2 transition-all ${
+                      customDrink.topFlavor === flavor.id
+                        ? 'border-blue-500 bg-blue-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <div
+                      className="w-full h-8 rounded mb-2"
+                      style={{ backgroundColor: flavor.color }}
+                    />
+                    <div className="text-sm font-medium text-gray-900">{flavor.name}</div>
+                    {flavor.price > 0 && (
+                      <div className="text-xs text-gray-500">+${flavor.price}</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Add-ons */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Health Boosters</h3>
+              <div className="grid grid-cols-2 gap-3">
+                {addOns.map((addOn) => (
+                  <label
+                    key={addOn.id}
+                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                      selectedAddOns.includes(addOn.id)
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedAddOns.includes(addOn.id)}
+                      onChange={() => handleAddOnToggle(addOn.id)}
+                      className="sr-only"
+                    />
+                    <div className="text-sm font-medium text-gray-900">{addOn.name}</div>
+                    <div className="text-xs text-gray-500">+${addOn.price}</div>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Preview Panel */}
+          <div className="space-y-8">
+            {/* Visual Preview */}
+            <div className="bg-white rounded-2xl shadow-lg p-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-6 text-center">
+                Your Custom Drink
+              </h3>
+              
+              <div className="flex justify-center mb-6">
+                <canvas
+                  ref={canvasRef}
+                  width={200}
+                  height={350}
+                  className="border border-gray-200 rounded-lg"
+                />
+              </div>
+
+              <div className="text-center">
+                <div className="text-2xl font-bold text-gray-900 mb-2">
+                  ${calculateTotalPrice().toFixed(2)}
+                </div>
+                <div className="text-sm text-gray-500">
+                  Base price + customizations
+                </div>
+              </div>
+            </div>
+
+            {/* Ingredients List */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Ingredients</h3>
+              <ul className="space-y-2">
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                  {baseFlavors.find(f => f.id === customDrink.baseFlavor)?.name} (Base)
+                </li>
+                <li className="flex items-center text-sm text-gray-600">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                  {topFlavors.find(f => f.id === customDrink.topFlavor)?.name} (Top)
+                </li>
+                {selectedAddOns.map((addOnId) => {
+                  const addOn = addOns.find(a => a.id === addOnId)
+                  return (
+                    <li key={addOnId} className="flex items-center text-sm text-gray-600">
+                      <span className="w-2 h-2 bg-green-500 rounded-full mr-3"></span>
+                      {addOn?.name}
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+
+            {/* Save Button */}
+            <button
+              onClick={handleSaveAndAddToCart}
+              disabled={isSaving || !customDrink.name.trim()}
+              className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? 'Saving...' : 'Save & Add to Cart'}
+            </button>
+
+            {!user && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm text-yellow-800">
+                  <strong>Sign in required:</strong> You need to be logged in to save custom drinks to your cart.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Tips Section */}
+        <div className="mt-16 bg-white rounded-2xl shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Customization Tips</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Color Combinations</h3>
+              <p className="text-sm text-gray-600">
+                Choose contrasting colors for the best two-tone effect. Light bases work well with dark tops.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Flavor Balance</h3>
+              <p className="text-sm text-gray-600">
+                Consider how your base and top flavors will complement each other when layered.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Health Benefits</h3>
+              <p className="text-sm text-gray-600">
+                Add-ons provide additional nutritional benefits. Choose based on your health goals.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+

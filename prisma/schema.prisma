@@ -1,0 +1,468 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  avatar    String?
+  role      UserRole @default(CUSTOMER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  addresses     Address[]
+  orders        Order[]
+  reviews       Review[]
+  loyaltyPoints LoyaltyPoint[]
+  referrals     Referral[] @relation("Referrer")
+  referredBy    Referral?  @relation("Referred")
+  customDrinks  CustomDrink[]
+  galleryUploads GalleryUpload[]
+  blogComments  BlogComment[]
+  eventRSVPs    EventRSVP[]
+
+  @@map("users")
+}
+
+model Address {
+  id          String  @id @default(cuid())
+  userId      String
+  type        AddressType @default(SHIPPING)
+  firstName   String
+  lastName    String
+  company     String?
+  address1    String
+  address2    String?
+  city        String
+  state       String
+  zipCode     String
+  country     String
+  phone       String?
+  isDefault   Boolean @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders  Order[]
+
+  @@map("addresses")
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  shortDescription String?
+  price       Decimal  @db.Decimal(10, 2)
+  comparePrice Decimal? @db.Decimal(10, 2)
+  sku         String   @unique
+  inventory   Int      @default(0)
+  isActive    Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  category    ProductCategory
+  type        ProductType @default(REGULAR)
+  healthBenefits String[]
+  allergens   String[]
+  ingredients String[]
+  nutrition   Json?
+  images      String[]
+  colors      String[]
+  flavors     String[]
+  tags        String[]
+  seoTitle    String?
+  seoDescription String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orderItems    OrderItem[]
+  reviews       Review[]
+  promotions    ProductPromotion[]
+
+  @@map("products")
+}
+
+model CustomDrink {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  baseProduct String?
+  colors      String[]
+  flavors     String[]
+  ingredients String[]
+  price       Decimal  @db.Decimal(10, 2)
+  image       String?
+  isPublic    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+
+  @@map("custom_drinks")
+}
+
+model Order {
+  id              String      @id @default(cuid())
+  orderNumber     String      @unique
+  userId          String?
+  email           String
+  status          OrderStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  shippingStatus  ShippingStatus @default(PENDING)
+  subtotal        Decimal     @db.Decimal(10, 2)
+  tax             Decimal     @db.Decimal(10, 2)
+  shipping        Decimal     @db.Decimal(10, 2)
+  discount        Decimal     @db.Decimal(10, 2) @default(0)
+  total           Decimal     @db.Decimal(10, 2)
+  currency        String      @default("USD")
+  shippingAddress Json
+  billingAddress  Json?
+  paymentMethod   String?
+  paymentIntentId String?
+  trackingNumber  String?
+  notes           String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  user      User?       @relation(fields: [userId], references: [id])
+  address   Address?    @relation(fields: [shippingAddressId], references: [id])
+  items     OrderItem[]
+  promotions OrderPromotion[]
+
+  shippingAddressId String?
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id            String   @id @default(cuid())
+  orderId       String
+  productId     String?
+  customDrinkId String?
+  quantity      Int
+  price         Decimal  @db.Decimal(10, 2)
+  total         Decimal  @db.Decimal(10, 2)
+  options       Json?
+  createdAt     DateTime @default(now())
+
+  order       Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product?    @relation(fields: [productId], references: [id])
+  customDrink CustomDrink? @relation(fields: [customDrinkId], references: [id])
+
+  @@map("order_items")
+}
+
+model Promotion {
+  id          String   @id @default(cuid())
+  name        String
+  code        String?  @unique
+  type        PromotionType
+  value       Decimal  @db.Decimal(10, 2)
+  minAmount   Decimal? @db.Decimal(10, 2)
+  maxDiscount Decimal? @db.Decimal(10, 2)
+  usageLimit  Int?
+  usedCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  startsAt    DateTime
+  endsAt      DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products  ProductPromotion[]
+  orders    OrderPromotion[]
+
+  @@map("promotions")
+}
+
+model ProductPromotion {
+  id          String @id @default(cuid())
+  productId   String
+  promotionId String
+
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, promotionId])
+  @@map("product_promotions")
+}
+
+model OrderPromotion {
+  id          String @id @default(cuid())
+  orderId     String
+  promotionId String
+  discount    Decimal @db.Decimal(10, 2)
+
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  promotion Promotion @relation(fields: [promotionId], references: [id])
+
+  @@unique([orderId, promotionId])
+  @@map("order_promotions")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int
+  title     String?
+  comment   String?
+  isVerified Boolean @default(false)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("reviews")
+}
+
+model LoyaltyPoint {
+  id          String   @id @default(cuid())
+  userId      String
+  points      Int
+  type        PointType
+  description String
+  orderId     String?
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("loyalty_points")
+}
+
+model Referral {
+  id          String   @id @default(cuid())
+  referrerId  String
+  referredId  String   @unique
+  code        String   @unique
+  status      ReferralStatus @default(PENDING)
+  reward      Decimal? @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+
+  referrer User @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referred User @relation("Referred", fields: [referredId], references: [id], onDelete: Cascade)
+
+  @@map("referrals")
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String
+  content     String?
+  location    String
+  address     String?
+  startDate   DateTime
+  endDate     DateTime?
+  maxAttendees Int?
+  price       Decimal  @db.Decimal(10, 2) @default(0)
+  image       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  rsvps EventRSVP[]
+
+  @@map("events")
+}
+
+model EventRSVP {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  status    RSVPStatus @default(ATTENDING)
+  guests    Int      @default(1)
+  notes     String?
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+  @@map("event_rsvps")
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String
+  featuredImage String?
+  author      String
+  tags        String[]
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  seoTitle    String?
+  seoDescription String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  comments BlogComment[]
+
+  @@map("blog_posts")
+}
+
+model BlogComment {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  content   String
+  isApproved Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post BlogPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("blog_comments")
+}
+
+model GalleryUpload {
+  id        String   @id @default(cuid())
+  userId    String
+  imageUrl  String
+  caption   String?
+  tags      String[]
+  isApproved Boolean @default(false)
+  isFeatured Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("gallery_uploads")
+}
+
+model Newsletter {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@map("newsletters")
+}
+
+model Content {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  title     String
+  content   String
+  type      ContentType
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("content")
+}
+
+// Enums
+enum UserRole {
+  ADMIN
+  STAFF
+  CUSTOMER
+}
+
+enum AddressType {
+  SHIPPING
+  BILLING
+}
+
+enum ProductCategory {
+  SMOOTHIES
+  JUICES
+  TEAS
+  COFFEE
+  ENERGY_DRINKS
+  CUSTOM
+}
+
+enum ProductType {
+  REGULAR
+  CUSTOM
+  SEASONAL
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum ShippingStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  RETURNED
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+  BUY_X_GET_Y
+}
+
+enum PointType {
+  PURCHASE
+  REFERRAL
+  REVIEW
+  SOCIAL_SHARE
+  BIRTHDAY
+  ADMIN_ADJUSTMENT
+}
+
+enum ReferralStatus {
+  PENDING
+  COMPLETED
+  EXPIRED
+}
+
+enum RSVPStatus {
+  ATTENDING
+  NOT_ATTENDING
+  MAYBE
+}
+
+enum ContentType {
+  ABOUT
+  FAQ
+  PRIVACY_POLICY
+  TERMS_OF_SERVICE
+  SHIPPING_INFO
+  RETURN_POLICY
+}
