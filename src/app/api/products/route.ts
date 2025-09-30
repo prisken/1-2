@@ -53,6 +53,94 @@ export async function GET(req: NextRequest) {
       reviewCount: product.reviews.length
     }))
 
+    // If no products found in database, return sample products
+    if (productsWithRatings.length === 0) {
+      const sampleProducts = [
+        {
+          id: '1',
+          name: 'Strawberry Vanilla Delight',
+          description: 'A perfect blend of fresh strawberries and creamy vanilla',
+          price: 6.99,
+          images: ['/images/placeholder-drink.jpg'],
+          category: 'SMOOTHIES',
+          inStock: true,
+          averageRating: 4.5,
+          reviewCount: 12,
+          slug: 'strawberry-vanilla-delight'
+        },
+        {
+          id: '2',
+          name: 'Mango Coconut Bliss',
+          description: 'Tropical mango with rich coconut cream',
+          price: 7.99,
+          images: ['/images/placeholder-drink.jpg'],
+          category: 'SMOOTHIES',
+          inStock: true,
+          averageRating: 4.8,
+          reviewCount: 8,
+          slug: 'mango-coconut-bliss'
+        },
+        {
+          id: '3',
+          name: 'Blueberry Almond Dream',
+          description: 'Antioxidant-rich blueberries with almond milk',
+          price: 6.49,
+          images: ['/images/placeholder-drink.jpg'],
+          category: 'SMOOTHIES',
+          inStock: true,
+          averageRating: 4.3,
+          reviewCount: 15,
+          slug: 'blueberry-almond-dream'
+        },
+        {
+          id: '4',
+          name: 'Green Energy Boost',
+          description: 'Spinach, kale, and apple for a healthy energy kick',
+          price: 5.99,
+          images: ['/images/placeholder-drink.jpg'],
+          category: 'JUICES',
+          inStock: true,
+          averageRating: 4.2,
+          reviewCount: 9,
+          slug: 'green-energy-boost'
+        },
+        {
+          id: '5',
+          name: 'Chocolate Banana Smoothie',
+          description: 'Rich chocolate with fresh banana and almond milk',
+          price: 7.49,
+          images: ['/images/placeholder-drink.jpg'],
+          category: 'SMOOTHIES',
+          inStock: true,
+          averageRating: 4.6,
+          reviewCount: 11,
+          slug: 'chocolate-banana-smoothie'
+        },
+        {
+          id: '6',
+          name: 'Tropical Paradise',
+          description: 'Pineapple, mango, and coconut water blend',
+          price: 6.79,
+          images: ['/images/placeholder-drink.jpg'],
+          category: 'JUICES',
+          inStock: true,
+          averageRating: 4.7,
+          reviewCount: 7,
+          slug: 'tropical-paradise'
+        }
+      ]
+
+      return NextResponse.json({
+        products: sampleProducts,
+        pagination: {
+          page: 1,
+          limit: 12,
+          total: sampleProducts.length,
+          pages: 1
+        }
+      })
+    }
+
     return NextResponse.json({
       products: productsWithRatings,
       pagination: {
