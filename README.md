@@ -238,4 +238,4 @@ For technical support or questions:
 
 ---
 
-Built with ❤️ for the 1/2 Drinks community
+Built with ❤️ for the 1/2 Drinks community# Trigger Vercel redeploy
