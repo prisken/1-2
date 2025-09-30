@@ -8,18 +8,21 @@ import {
   XMarkIcon, 
   ShoppingBagIcon, 
   UserIcon,
-  MagnifyingGlassIcon
+  MagnifyingGlassIcon,
+  HeartIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
+import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { useCart } from '@/components/providers/CartProvider'
 import CartDrawer from '@/components/cart/CartDrawer'
 import AuthModal from '@/components/auth/AuthModal'
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Shop', href: '/shop' },
-  { name: 'Custom', href: '/custom' },
-  { name: 'About', href: '/about' },
+  { name: 'Home', href: '/', icon: '🏠' },
+  { name: 'Shop', href: '/shop', icon: '🛍️' },
+  { name: 'Custom', href: '/custom', icon: '✨' },
+  { name: 'About', href: '/about', icon: '💖' },
 ]
 
 export default function Header() {
@@ -38,56 +41,74 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-white shadow-sm">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-rose-100 shadow-lg">
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
+          {/* Logo */}
           <div className="flex lg:flex-1">
-            <Link href="/" className="-m-1.5 p-1.5">
-              <span className="sr-only">1/2 Drinks</span>
-              <div className="text-2xl font-bold text-green-600">
-                1/2 Drinks
+            <Link href="/" className="group flex items-center space-x-2">
+              <div className="relative">
+                <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <HeartSolidIcon className="h-6 w-6 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center">
+                  <SparklesIcon className="h-2 w-2 text-white" />
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
+                  1/2 Drinks
+                </span>
+                <span className="text-xs text-gray-500 -mt-1">Handcrafted with Love</span>
               </div>
             </Link>
           </div>
-          
-          <div className="flex lg:hidden">
-            <button
-              type="button"
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-              onClick={() => setMobileMenuOpen(true)}
-            >
-              <span className="sr-only">Open main menu</span>
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </button>
-          </div>
-          
-          <div className="hidden lg:flex lg:gap-x-12">
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex lg:gap-x-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900 hover:text-green-600 transition-colors"
+                className="group flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
               >
-                {item.name}
+                <span className="text-lg group-hover:scale-110 transition-transform duration-300">{item.icon}</span>
+                <span>{item.name}</span>
               </Link>
             ))}
           </div>
-          
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
-            <button className="p-2 text-gray-700 hover:text-green-600 transition-colors">
-              <MagnifyingGlassIcon className="h-6 w-6" />
+
+          {/* Right side actions */}
+          <div className="flex items-center space-x-4">
+            {/* Search */}
+            <button className="p-2 text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300">
+              <MagnifyingGlassIcon className="h-5 w-5" />
             </button>
-            
+
+            {/* Cart */}
+            <button
+              onClick={openCart}
+              className="relative p-2 text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300 group"
+            >
+              <ShoppingBagIcon className="h-5 w-5 group-hover:scale-110 transition-transform duration-300" />
+              {cartItemsCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-5 w-5 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {cartItemsCount}
+                </span>
+              )}
+            </button>
+
+            {/* User Menu */}
             {user ? (
-              <div className="flex items-center gap-x-4">
-                <Link
-                  href="/profile"
-                  className="p-2 text-gray-700 hover:text-green-600 transition-colors"
-                >
-                  <UserIcon className="h-6 w-6" />
-                </Link>
+              <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-rose-50 to-pink-50 rounded-xl">
+                  <div className="w-8 h-8 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center">
+                    <UserIcon className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">{user.firstName}</span>
+                </div>
                 <button
                   onClick={handleLogout}
-                  className="text-sm font-semibold leading-6 text-gray-900 hover:text-green-600 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300"
                 >
                   Logout
                 </button>
@@ -95,76 +116,70 @@ export default function Header() {
             ) : (
               <button
                 onClick={() => setAuthModalOpen(true)}
-                className="text-sm font-semibold leading-6 text-gray-900 hover:text-green-600 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                Sign in
+                <UserIcon className="h-4 w-4" />
+                <span>Login</span>
               </button>
             )}
-            
+
+            {/* Mobile menu button */}
             <button
-              onClick={openCart}
-              className="relative p-2 text-gray-700 hover:text-green-600 transition-colors"
+              type="button"
+              className="lg:hidden p-2 text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300"
+              onClick={() => setMobileMenuOpen(true)}
             >
-              <ShoppingBagIcon className="h-6 w-6" />
-              {cartItemsCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItemsCount}
-                </span>
-              )}
+              <Bars3Icon className="h-6 w-6" />
             </button>
           </div>
         </nav>
-        
+
         {/* Mobile menu */}
-        <div className={`lg:hidden ${mobileMenuOpen ? 'block' : 'hidden'}`}>
-          <div className="fixed inset-0 z-50" />
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="-m-1.5 p-1.5">
-                <span className="sr-only">1/2 Drinks</span>
-                <div className="text-2xl font-bold text-green-600">
-                  1/2 Drinks
+        {mobileMenuOpen && (
+          <div className="lg:hidden">
+            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
+            <div className="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white shadow-xl">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-lg flex items-center justify-center">
+                    <HeartSolidIcon className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-xl font-bold text-gray-900">1/2 Drinks</span>
                 </div>
-              </Link>
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-gray-700"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Close menu</span>
-                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-                <div className="py-6">
+                <button
+                  type="button"
+                  className="p-2 text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <div className="px-4 py-6 space-y-4">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="flex items-center space-x-3 px-4 py-3 rounded-xl text-base font-medium text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <span className="text-xl">{item.icon}</span>
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+                
+                <div className="pt-4 border-t border-gray-200">
                   {user ? (
-                    <div className="space-y-2">
-                      <Link
-                        href="/profile"
-                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Profile
-                      </Link>
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-rose-50 to-pink-50 rounded-xl">
+                        <div className="w-8 h-8 bg-gradient-to-br from-rose-400 to-pink-500 rounded-full flex items-center justify-center">
+                          <UserIcon className="h-4 w-4 text-white" />
+                        </div>
+                        <span className="font-medium text-gray-700">{user.firstName}</span>
+                      </div>
                       <button
-                        onClick={() => {
-                          handleLogout()
-                          setMobileMenuOpen(false)
-                        }}
-                        className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 w-full text-left"
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-base font-medium text-gray-700 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all duration-300"
                       >
                         Logout
                       </button>
@@ -175,20 +190,27 @@ export default function Header() {
                         setAuthModalOpen(true)
                         setMobileMenuOpen(false)
                       }}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50 w-full text-left"
+                      className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-300"
                     >
-                      Sign in
+                      <UserIcon className="h-4 w-4" />
+                      <span>Login</span>
                     </button>
                   )}
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </header>
 
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={authModalOpen} 
+        onClose={() => setAuthModalOpen(false)} 
+      />
+      
+      {/* Cart Drawer */}
       <CartDrawer />
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
     </>
   )
 }
