@@ -4,6 +4,10 @@ import './globals.css'
 import { AuthProvider } from '@/components/providers/AuthProvider'
 import { CartProvider } from '@/components/providers/CartProvider'
 import ClientOnly from '@/components/ClientOnly'
+import Header from '@/components/layout/Header'
+import Footer from '@/components/layout/Footer'
+import CartDrawer from '@/components/cart/CartDrawer'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -35,7 +39,11 @@ export default function RootLayout({
         <ClientOnly>
           <AuthProvider>
             <CartProvider>
+              <Toaster />
+              <Header />
               {children}
+              <Footer />
+              <CartDrawer />
             </CartProvider>
           </AuthProvider>
         </ClientOnly>
