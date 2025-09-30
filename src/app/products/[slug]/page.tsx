@@ -113,13 +113,13 @@ export default function ProductPage() {
           <div className="space-y-4">
             <div className="aspect-square bg-white rounded-lg overflow-hidden">
               <img
-                src={product.images[selectedImage] || '/images/placeholder-drink.jpg'}
+                src={product.images?.[selectedImage] || '/images/placeholder-drink.jpg'}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
             </div>
             
-            {product.images.length > 1 && (
+            {product.images && product.images.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
                 {product.images.map((image, index) => (
                   <button
