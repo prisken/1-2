@@ -7,6 +7,12 @@ import FilterSidebar from '@/components/shop/FilterSidebar'
 import SortDropdown from '@/components/shop/SortDropdown'
 import Pagination from '@/components/shop/Pagination'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { 
+  FunnelIcon, 
+  MagnifyingGlassIcon,
+  AdjustmentsHorizontalIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline'
 
 interface Product {
   id: string
@@ -35,6 +41,7 @@ export default function ShopPage() {
   const searchParams = useSearchParams()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
   const [pagination, setPagination] = useState<PaginationInfo>({
     page: 1,
     limit: 12,
@@ -105,90 +112,154 @@ export default function ShopPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Mobile-First Header */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">
               Shop Our Collection
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Discover our handcrafted beverages, each one a unique blend of health and artistry
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+              Discover our handcrafted beverages, each one a unique blend of health and artistry.
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
-            <FilterSidebar
-              filters={filters}
-              onFilterChange={handleFilterChange}
-            />
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Toolbar */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <div className="text-sm text-gray-600">
-                Showing {products.length} of {pagination.total} products
-              </div>
-              <SortDropdown
-                sortBy={filters.sortBy}
-                sortOrder={filters.sortOrder}
-                onSortChange={(sortBy, sortOrder) => 
-                  handleFilterChange({ sortBy, sortOrder })
-                }
+      {/* Mobile Search & Filter Bar */}
+      <div className="bg-white border-b border-gray-200 sticky top-16 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center space-x-3">
+            {/* Mobile Search */}
+            <div className="flex-1 relative">
+              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search drinks..."
+                value={filters.search}
+                onChange={(e) => handleFilterChange({ search: e.target.value })}
+                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-sm sm:text-base"
               />
             </div>
+            
+            {/* Mobile Filter Button */}
+            <button
+              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              className="flex items-center space-x-2 px-4 py-3 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-colors min-h-[48px]"
+            >
+              <FunnelIcon className="h-5 w-5" />
+              <span className="hidden sm:inline text-sm font-medium">Filters</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-            {/* Products Grid */}
-            {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <LoadingSpinner size="lg" />
-              </div>
-            ) : products.length > 0 ? (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-                  {products.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
+      {/* Mobile Filter Overlay */}
+      {showMobileFilters && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowMobileFilters(false)}>
+          <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                className="p-2 text-gray-400 hover:text-gray-600 rounded-lg"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="p-4">
+              <FilterSidebar 
+                filters={filters} 
+                onFilterChange={(newFilters) => {
+                  handleFilterChange(newFilters)
+                  setShowMobileFilters(false)
+                }} 
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
-                {/* Pagination */}
-                {pagination.totalPages > 1 && (
-                  <Pagination
-                    currentPage={pagination.page}
-                    totalPages={pagination.totalPages}
-                    onPageChange={handlePageChange}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Desktop Filter Sidebar - Hidden on mobile */}
+          <div className="hidden lg:block lg:col-span-1">
+            <FilterSidebar filters={filters} onFilterChange={handleFilterChange} />
+          </div>
+
+          {/* Product Grid - Mobile First */}
+          <div className="lg:col-span-3">
+            {/* Mobile Sort & Results */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 sm:mb-6 space-y-3 sm:space-y-0">
+              <div className="flex items-center justify-between">
+                <p className="text-sm sm:text-base text-gray-600">
+                  <span className="font-medium">{products.length}</span> of <span className="font-medium">{pagination.total}</span> products
+                </p>
+                <div className="lg:hidden">
+                  <SortDropdown 
+                    sortBy={filters.sortBy} 
+                    sortOrder={filters.sortOrder} 
+                    onSortChange={(sortBy, sortOrder) => handleFilterChange({ sortBy, sortOrder })} 
                   />
-                )}
-              </>
-            ) : (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                  </svg>
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
-                <p className="text-gray-500 mb-6">
-                  Try adjusting your filters or search terms
+              </div>
+              
+              {/* Desktop Sort */}
+              <div className="hidden lg:block">
+                <SortDropdown 
+                  sortBy={filters.sortBy} 
+                  sortOrder={filters.sortOrder} 
+                  onSortChange={(sortBy, sortOrder) => handleFilterChange({ sortBy, sortOrder })} 
+                />
+              </div>
+            </div>
+
+            {/* Loading State */}
+            {loading ? (
+              <div className="flex justify-center py-12">
+                <LoadingSpinner />
+              </div>
+            ) : products.length === 0 ? (
+              /* Empty State */
+              <div className="text-center py-12 sm:py-16">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <MagnifyingGlassIcon className="h-8 w-8 sm:h-10 sm:w-10 text-gray-400" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">No products found</h3>
+                <p className="text-sm sm:text-base text-gray-500 mb-6 max-w-md mx-auto">
+                  Try adjusting your filters or search terms to find what you're looking for.
                 </p>
                 <button
-                  onClick={() => handleFilterChange({
-                    category: '',
-                    search: '',
-                    minPrice: '',
-                    maxPrice: ''
+                  onClick={() => handleFilterChange({ 
+                    category: '', 
+                    search: '', 
+                    minPrice: '', 
+                    maxPrice: '', 
+                    sortBy: 'createdAt', 
+                    sortOrder: 'desc' 
                   })}
-                  className="btn btn-primary"
+                  className="inline-flex items-center px-4 py-3 bg-rose-500 text-white font-medium rounded-xl hover:bg-rose-600 transition-colors text-sm sm:text-base min-h-[48px]"
                 >
-                  Clear Filters
+                  Clear All Filters
                 </button>
+              </div>
+            ) : (
+              /* Product Grid - Mobile Optimized */
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {products.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+
+            {/* Pagination - Mobile Optimized */}
+            {pagination.totalPages > 1 && (
+              <div className="mt-8 sm:mt-12">
+                <Pagination
+                  currentPage={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPageChange={handlePageChange}
+                />
               </div>
             )}
           </div>
@@ -197,5 +268,3 @@ export default function ShopPage() {
     </div>
   )
 }
-
-

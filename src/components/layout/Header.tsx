@@ -41,7 +41,7 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-rose-100 shadow-lg">
+      <header className="sticky top-0 z-50 bg-white border-b border-rose-200 shadow-lg">
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 sm:p-4 lg:px-8" aria-label="Global">
           {/* Logo - Mobile optimized */}
           <div className="flex lg:flex-1">
