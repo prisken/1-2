@@ -16,7 +16,8 @@
     "type-check": "tsc --noEmit",
     "railway:build": "prisma generate && next build",
     "railway:install": "npm ci && prisma generate",
-    "railway:start": "next start"
+    "railway:start": "next start",
+    "start": "next start"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
