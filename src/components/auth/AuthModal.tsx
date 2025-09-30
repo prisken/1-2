@@ -114,7 +114,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {/* Content */}
           <div className="p-6">
             {isLogin ? (
-              <form onSubmit={handleLoginSubmit(handleLogin)} className="space-y-4">
+              <form onSubmit={handleLoginSubmit((data) => handleLogin(data as { email: string; password: string }))} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Email
@@ -126,7 +126,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     placeholder="Enter your email"
                   />
                   {loginErrors.email && (
-                    <p className="text-red-500 text-sm mt-1">{loginErrors.email.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{String(loginErrors.email.message)}</p>
                   )}
                 </div>
 
@@ -154,7 +154,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </button>
                   </div>
                   {loginErrors.password && (
-                    <p className="text-red-500 text-sm mt-1">{loginErrors.password.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{String(loginErrors.password.message)}</p>
                   )}
                 </div>
 
@@ -176,7 +176,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </button>
               </form>
             ) : (
-              <form onSubmit={handleRegisterSubmit(handleRegister)} className="space-y-4">
+              <form onSubmit={handleRegisterSubmit((data) => handleRegister(data as any))} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -189,7 +189,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       placeholder="First name"
                     />
                     {registerErrors.firstName && (
-                      <p className="text-red-500 text-sm mt-1">{registerErrors.firstName.message}</p>
+                      <p className="text-red-500 text-sm mt-1">{String(registerErrors.firstName.message)}</p>
                     )}
                   </div>
 
@@ -204,7 +204,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                       placeholder="Last name"
                     />
                     {registerErrors.lastName && (
-                      <p className="text-red-500 text-sm mt-1">{registerErrors.lastName.message}</p>
+                      <p className="text-red-500 text-sm mt-1">{String(registerErrors.lastName.message)}</p>
                     )}
                   </div>
                 </div>
@@ -220,7 +220,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     placeholder="Enter your email"
                   />
                   {registerErrors.email && (
-                    <p className="text-red-500 text-sm mt-1">{registerErrors.email.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{String(registerErrors.email.message)}</p>
                   )}
                 </div>
 
@@ -260,7 +260,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </button>
                   </div>
                   {registerErrors.password && (
-                    <p className="text-red-500 text-sm mt-1">{registerErrors.password.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{String(registerErrors.password.message)}</p>
                   )}
                 </div>
 
@@ -288,7 +288,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     </button>
                   </div>
                   {registerErrors.confirmPassword && (
-                    <p className="text-red-500 text-sm mt-1">{registerErrors.confirmPassword.message}</p>
+                    <p className="text-red-500 text-sm mt-1">{String(registerErrors.confirmPassword.message)}</p>
                   )}
                 </div>
 

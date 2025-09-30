@@ -21,7 +21,7 @@ export async function uploadImage(
   } = {}
 ): Promise<{ secure_url: string; public_id: string }> {
   try {
-    const result = await cloudinary.uploader.upload(file, {
+    const result = await cloudinary.uploader.upload(file as string, {
       folder: options.folder || 'half-drinks',
       public_id: options.public_id,
       transformation: options.transformation,

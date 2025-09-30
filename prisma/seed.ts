@@ -47,7 +47,7 @@ async function main() {
       comparePrice: 10.99,
       sku: 'TSS-001',
       inventory: 50,
-      category: 'SMOOTHIES',
+      category: 'SMOOTHIES' as const,
       isFeatured: true,
       healthBenefits: ['Vitamin C', 'Antioxidants', 'Hydration'],
       allergens: ['Coconut'],
@@ -65,7 +65,7 @@ async function main() {
       price: 7.99,
       sku: 'BBJ-002',
       inventory: 75,
-      category: 'JUICES',
+      category: 'JUICES' as const,
       isFeatured: true,
       healthBenefits: ['Antioxidants', 'Vitamin C', 'Low Sugar'],
       allergens: [],
@@ -83,7 +83,7 @@ async function main() {
       price: 6.99,
       sku: 'GGT-003',
       inventory: 100,
-      category: 'TEAS',
+      category: 'TEAS' as const,
       healthBenefits: ['Antioxidants', 'Caffeine', 'Metabolism Boost'],
       allergens: [],
       ingredients: ['Green Tea', 'Matcha', 'Mint', 'Lemon Balm', 'Ginger'],
@@ -101,7 +101,7 @@ async function main() {
       comparePrice: 11.99,
       sku: 'CDC-004',
       inventory: 40,
-      category: 'COFFEE',
+      category: 'COFFEE' as const,
       isFeatured: true,
       healthBenefits: ['Caffeine', 'Antioxidants'],
       allergens: ['Dairy'],
@@ -119,7 +119,7 @@ async function main() {
       price: 12.99,
       sku: 'EBE-005',
       inventory: 30,
-      category: 'ENERGY_DRINKS',
+      category: 'ENERGY_DRINKS' as const,
       healthBenefits: ['Energy', 'B-Vitamins', 'Natural Caffeine'],
       allergens: [],
       ingredients: ['Ginseng', 'Guarana', 'B-Vitamins', 'Green Tea Extract', 'Natural Flavors'],
@@ -136,7 +136,7 @@ async function main() {
       price: 5.99,
       sku: 'CCS-006',
       inventory: 200,
-      category: 'CUSTOM',
+      category: 'CUSTOM' as const,
       healthBenefits: ['Customizable', 'Fresh'],
       allergens: [],
       ingredients: ['Base Blend', 'Custom Additions'],
@@ -258,7 +258,7 @@ async function main() {
     {
       name: 'Summer Sale',
       code: 'SUMMER20',
-      type: 'PERCENTAGE',
+      type: 'PERCENTAGE' as const,
       value: 20.00,
       minAmount: 25.00,
       maxDiscount: 10.00,
@@ -269,7 +269,7 @@ async function main() {
     {
       name: 'First Order Discount',
       code: 'WELCOME10',
-      type: 'FIXED_AMOUNT',
+      type: 'FIXED_AMOUNT' as const,
       value: 10.00,
       minAmount: 20.00,
       usageLimit: 1,
@@ -307,7 +307,7 @@ async function main() {
           <li>Sustainability in every aspect of our business</li>
         </ul>
       `,
-      type: 'ABOUT',
+      type: 'ABOUT' as const,
     },
     {
       key: 'faq',
@@ -325,7 +325,7 @@ async function main() {
         <h3>Do you offer delivery?</h3>
         <p>Yes, we offer delivery within a 10-mile radius of our locations. Orders over $50 qualify for free delivery.</p>
       `,
-      type: 'FAQ',
+      type: 'FAQ' as const,
     },
   ]
 
