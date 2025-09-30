@@ -3,16 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useCart } from '@/components/providers/CartProvider'
 import { useAuth } from '@/components/providers/AuthProvider'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
 import FeaturedDrinks from '@/components/home/FeaturedDrinks'
 import BrandStory from '@/components/home/BrandStory'
 import InstagramFeed from '@/components/home/InstagramFeed'
 import NewsletterSignup from '@/components/home/NewsletterSignup'
 import QuickLinks from '@/components/home/QuickLinks'
 import LoyaltyTeaser from '@/components/home/LoyaltyTeaser'
-import CartDrawer from '@/components/cart/CartDrawer'
-import AuthModal from '@/components/auth/AuthModal'
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
@@ -40,8 +36,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
-      
       <main>
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
@@ -92,9 +86,6 @@ export default function Home() {
         {/* Newsletter Signup */}
         <NewsletterSignup />
       </main>
-
-      <Footer />
-      <CartDrawer />
     </div>
   )
 }
