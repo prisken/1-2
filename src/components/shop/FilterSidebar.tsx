@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline'
 
 interface Filters {
@@ -18,22 +19,22 @@ interface FilterSidebarProps {
 }
 
 const categories = [
-  { value: '', label: 'All Categories' },
-  { value: 'SMOOTHIES', label: 'Smoothies' },
-  { value: 'JUICES', label: 'Juices' },
-  { value: 'TEAS', label: 'Teas' },
-  { value: 'COFFEE', label: 'Coffee' },
-  { value: 'ENERGY_DRINKS', label: 'Energy Drinks' },
-  { value: 'CUSTOM', label: 'Custom Drinks' },
+  { value: '', labelKey: 'all_categories' },
+  { value: 'SMOOTHIES', labelKey: 'cat_smoothies' },
+  { value: 'JUICES', labelKey: 'cat_juices' },
+  { value: 'TEAS', labelKey: 'cat_teas' },
+  { value: 'COFFEE', labelKey: 'cat_coffee' },
+  { value: 'ENERGY_DRINKS', labelKey: 'cat_energy' },
+  { value: 'CUSTOM', labelKey: 'cat_custom' },
 ]
 
 const priceRanges = [
-  { value: '', label: 'Any Price' },
-  { value: '0-10', label: 'Under $10' },
-  { value: '10-20', label: '$10 - $20' },
-  { value: '20-30', label: '$20 - $30' },
-  { value: '30-50', label: '$30 - $50' },
-  { value: '50+', label: 'Over $50' },
+  { value: '', labelKey: 'any_price' },
+  { value: '0-10', labelKey: 'under_10' },
+  { value: '10-20', labelKey: '10_20' },
+  { value: '20-30', labelKey: '20_30' },
+  { value: '30-50', labelKey: '30_50' },
+  { value: '50+', labelKey: 'over_50' },
 ]
 
 const healthBenefits = [
@@ -48,6 +49,7 @@ const healthBenefits = [
 ]
 
 export default function FilterSidebar({ filters, onFilterChange }: FilterSidebarProps) {
+  const t = useTranslations('shop')
   const [expandedSections, setExpandedSections] = useState({
     category: true,
     price: true,
@@ -87,13 +89,13 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 sticky top-4">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+        <h2 className="text-lg font-semibold text-gray-900">{t('filters')}</h2>
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
             className="text-sm text-blue-600 hover:text-blue-500"
           >
-            Clear All
+            {t('clear_all')}
           </button>
         )}
       </div>
@@ -101,13 +103,13 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
       {/* Search */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Search
+          {t('search')}
         </label>
         <input
           type="text"
           value={filters.search}
           onChange={(e) => onFilterChange({ search: e.target.value })}
-          placeholder="Search products..."
+          placeholder={t('search_products')}
           className="input w-full"
         />
       </div>
@@ -118,7 +120,7 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
           onClick={() => toggleSection('category')}
           className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-3"
         >
-          Category
+          {t('category')}
           {expandedSections.category ? (
             <ChevronUpIcon className="h-4 w-4" />
           ) : (
@@ -138,7 +140,7 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
                   onChange={(e) => onFilterChange({ category: e.target.value })}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="ml-2 text-sm text-gray-600">{category.label}</span>
+                <span className="ml-2 text-sm text-gray-600">{t(category.labelKey)}</span>
               </label>
             ))}
           </div>
@@ -151,7 +153,7 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
           onClick={() => toggleSection('price')}
           className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-3"
         >
-          Price Range
+          {t('price_range')}
           {expandedSections.price ? (
             <ChevronUpIcon className="h-4 w-4" />
           ) : (
@@ -175,7 +177,7 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
                   onChange={() => handlePriceRangeChange(range.value)}
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
-                <span className="ml-2 text-sm text-gray-600">{range.label}</span>
+                <span className="ml-2 text-sm text-gray-600">{t(range.labelKey)}</span>
               </label>
             ))}
             
@@ -184,14 +186,14 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
               <div className="grid grid-cols-2 gap-2">
                 <input
                   type="number"
-                  placeholder="Min"
+                  placeholder={t('min')}
                   value={filters.minPrice}
                   onChange={(e) => onFilterChange({ minPrice: e.target.value })}
                   className="input text-sm"
                 />
                 <input
                   type="number"
-                  placeholder="Max"
+                  placeholder={t('max')}
                   value={filters.maxPrice}
                   onChange={(e) => onFilterChange({ maxPrice: e.target.value })}
                   className="input text-sm"
@@ -208,7 +210,7 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
           onClick={() => toggleSection('benefits')}
           className="flex items-center justify-between w-full text-sm font-medium text-gray-700 mb-3"
         >
-          Health Benefits
+          {t('health_benefits')}
           {expandedSections.benefits ? (
             <ChevronUpIcon className="h-4 w-4" />
           ) : (
@@ -234,11 +236,11 @@ export default function FilterSidebar({ filters, onFilterChange }: FilterSidebar
       {/* Active Filters Summary */}
       {hasActiveFilters && (
         <div className="pt-4 border-t border-gray-200">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Active Filters:</h3>
+          <h3 className="text-sm font-medium text-gray-700 mb-2">{t('active_filters')}</h3>
           <div className="space-y-1">
             {filters.category && (
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-600">Category: {categories.find(c => c.value === filters.category)?.label}</span>
+                <span className="text-gray-600">{t('category')}: {t(categories.find(c => c.value === filters.category)?.labelKey || 'all_categories')}</span>
                 <button
                   onClick={() => onFilterChange({ category: '' })}
                   className="text-red-500 hover:text-red-700"

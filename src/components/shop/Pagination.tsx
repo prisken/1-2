@@ -1,6 +1,7 @@
 'use client'
 
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
 
 interface PaginationProps {
   currentPage: number
@@ -9,6 +10,7 @@ interface PaginationProps {
 }
 
 export default function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+  const t = useTranslations('common')
   const getVisiblePages = () => {
     const delta = 2
     const range = []
@@ -52,7 +54,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ChevronLeftIcon className="h-5 w-5" />
-        <span className="sr-only">Previous</span>
+        <span className="sr-only">{t('previous')}</span>
       </button>
 
       {/* Page Numbers */}
@@ -93,7 +95,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         className="relative inline-flex items-center px-2 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <ChevronRightIcon className="h-5 w-5" />
-        <span className="sr-only">Next</span>
+        <span className="sr-only">{t('next')}</span>
       </button>
     </nav>
   )

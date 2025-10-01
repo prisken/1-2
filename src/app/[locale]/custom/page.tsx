@@ -5,19 +5,15 @@ import { useCart } from '@/components/providers/CartProvider'
 import { useAuth } from '@/components/providers/AuthProvider'
 import toast from 'react-hot-toast'
 import { 
-  SparklesIcon, 
-  HeartIcon, 
   PlusCircleIcon, 
-  MinusCircleIcon,
   CheckIcon,
   ArrowRightIcon,
   ArrowLeftIcon
 } from '@heroicons/react/24/solid'
 import { 
-  ChevronDownIcon, 
-  ChevronUpIcon,
   BeakerIcon
 } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
 
 interface CustomDrink {
   name: string
@@ -59,6 +55,7 @@ const basePrices = {
 }
 
 export default function CustomDrinkBuilder() {
+  const t = useTranslations('custom')
   const [customDrink, setCustomDrink] = useState<CustomDrink>({
     name: 'My Custom Drink',
     baseFlavor: 'Strawberry',
@@ -71,7 +68,6 @@ export default function CustomDrinkBuilder() {
 
   const [isSaving, setIsSaving] = useState(false)
   const [currentStep, setCurrentStep] = useState(1)
-  const [showMobilePreview, setShowMobilePreview] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { addItem } = useCart()
   const { user } = useAuth()
@@ -98,7 +94,6 @@ export default function CustomDrinkBuilder() {
 
     ctx.clearRect(0, 0, width, height)
 
-    // Draw the cup outline
     ctx.beginPath()
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
     ctx.strokeStyle = '#E0E0E0'
@@ -106,11 +101,9 @@ export default function CustomDrinkBuilder() {
     ctx.stroke()
     ctx.closePath()
 
-    // Draw the two-tone drink
     const baseColor = getFlavorColor(customDrink.baseFlavor)
     const secondaryColor = getFlavorColor(customDrink.secondaryFlavor)
 
-    // Bottom half (base flavor)
     ctx.beginPath()
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
     ctx.clip()
@@ -118,15 +111,12 @@ export default function CustomDrinkBuilder() {
     ctx.fillRect(0, centerY, width, height / 2)
     ctx.closePath()
 
-    // Top half (secondary flavor)
     ctx.beginPath()
     ctx.arc(centerX, centerY, radius, 0, Math.PI * 2)
     ctx.clip()
     ctx.fillStyle = secondaryColor
     ctx.fillRect(0, 0, width, height / 2)
     ctx.closePath()
-
-    ctx.restore()
   }, [customDrink.baseFlavor, customDrink.secondaryFlavor])
 
   useEffect(() => {
@@ -164,7 +154,7 @@ export default function CustomDrinkBuilder() {
 
   const handleAddToCart = async () => {
     if (!user) {
-      toast.error('Please login to add custom drinks to cart')
+      toast.error(t('login_to_add'))
       return
     }
 
@@ -190,10 +180,10 @@ export default function CustomDrinkBuilder() {
       }
 
       addItem(cartItem)
-      toast.success('Custom drink added to cart!')
+      toast.success(t('added'))
     } catch (error) {
       console.error('Failed to add custom drink to cart:', error)
-      toast.error('Failed to add custom drink to cart')
+      toast.error(t('failed'))
     } finally {
       setIsSaving(false)
     }
@@ -209,57 +199,42 @@ export default function CustomDrinkBuilder() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50">
-      {/* Mobile-First Header */}
       <div className="bg-white shadow-sm border-b border-gray-200 sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              Create Your Custom Drink
-            </h1>
-            <p className="text-sm sm:text-base text-gray-600">
-              Design your perfect two-tone healthy beverage
-            </p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+            <p className="text-sm sm:text-base text-gray-600">{t('subtitle')}</p>
           </div>
         </div>
       </div>
 
-      {/* Mobile Progress Bar */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <div className="max-w-7xl mx.auto px-4 sm:px-6 lg:px-8 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep >= 1 ? 'bg-rose-500 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                1
-              </div>
-              <span className="text-sm font-medium text-gray-700">Details</span>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              currentStep >= 1 ? 'bg-rose-500 text-white' : 'bg-gray-200 text-gray-600'
+            }`}>
+              1
             </div>
             <div className="flex-1 h-1 bg-gray-200 mx-4">
               <div className={`h-1 bg-rose-500 transition-all duration-300 ${
                 currentStep >= 2 ? 'w-full' : 'w-0'
               }`}></div>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep >= 2 ? 'bg-rose-500 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                2
-              </div>
-              <span className="text-sm font-medium text-gray-700">Add-ons</span>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              currentStep >= 2 ? 'bg-rose-500 text.white' : 'bg-gray-200 text-gray-600'
+            }`}>
+              2
             </div>
             <div className="flex-1 h-1 bg-gray-200 mx-4">
               <div className={`h-1 bg-rose-500 transition-all duration-300 ${
                 currentStep >= 3 ? 'w-full' : 'w-0'
               }`}></div>
             </div>
-            <div className="flex items-center space-x-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep >= 3 ? 'bg-rose-500 text-white' : 'bg-gray-200 text-gray-600'
-              }`}>
-                3
-              </div>
-              <span className="text-sm font-medium text-gray-700">Review</span>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              currentStep >= 3 ? 'bg-rose-500 text.white' : 'bg-gray-200 text-gray-600'
+            }`}>
+              3
             </div>
           </div>
         </div>
@@ -267,21 +242,18 @@ export default function CustomDrinkBuilder() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-          {/* Mobile-First Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Step 1: Drink Details */}
             {currentStep === 1 && (
               <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <BeakerIcon className="h-6 w-6 text-rose-500 mr-3" />
-                  Drink Details
+                  {t('details')}
                 </h2>
-                
+
                 <div className="space-y-6">
-                  {/* Drink Name */}
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      Drink Name
+                      {t('drink_name')}
                     </label>
                     <input
                       type="text"
@@ -289,15 +261,14 @@ export default function CustomDrinkBuilder() {
                       name="name"
                       value={customDrink.name}
                       onChange={handleInputChange}
-                      placeholder="e.g., Sunset Smoothie"
+                      placeholder={t('drink_name_ph')}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-base"
                     />
                   </div>
 
-                  {/* Base Flavor */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Base Flavor
+                      {t('base_flavor')}
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                       {flavors.map(flavor => (
@@ -317,10 +288,9 @@ export default function CustomDrinkBuilder() {
                     </div>
                   </div>
 
-                  {/* Secondary Flavor */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Secondary Flavor
+                      {t('secondary_flavor')}
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                       {flavors.map(flavor => (
@@ -340,10 +310,9 @@ export default function CustomDrinkBuilder() {
                     </div>
                   </div>
 
-                  {/* Size Selection */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Size
+                      {t('size')}
                     </label>
                     <div className="grid grid-cols-3 gap-3">
                       {Object.entries(basePrices).map(([size, price]) => (
@@ -358,17 +327,16 @@ export default function CustomDrinkBuilder() {
                         >
                           <span className="text-2xl mb-2">🥤</span>
                           <span className="font-medium capitalize text-sm">{size}</span>
-                          <span className="text-xs text-gray-500">${price.toFixed(2)}</span>
+                          <span className="text-xs text-gray-500">${(price as number).toFixed(2)}</span>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Sweetness & Ice Level */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="sweetness" className="block text-sm font-medium text-gray-700 mb-2">
-                        Sweetness: {customDrink.sweetness}%
+                        {t('sweetness')}: {customDrink.sweetness}%
                       </label>
                       <input
                         type="range"
@@ -383,7 +351,7 @@ export default function CustomDrinkBuilder() {
                     </div>
                     <div>
                       <label htmlFor="iceLevel" className="block text-sm font-medium text-gray-700 mb-2">
-                        Ice Level: {customDrink.iceLevel}%
+                        {t('ice')}: {customDrink.iceLevel}%
                       </label>
                       <input
                         type="range"
@@ -401,19 +369,17 @@ export default function CustomDrinkBuilder() {
               </div>
             )}
 
-            {/* Step 2: Add-ons */}
             {currentStep === 2 && (
               <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <PlusCircleIcon className="h-6 w-6 text-green-500 mr-3" />
-                  Boosters & Add-ons
+                  {t('addons')}
                 </h2>
-                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {addOnsOptions.map(addOn => (
                     <label
                       key={addOn.name}
-                      className="flex items-center p-4 rounded-xl border-2 border-gray-200 bg-white cursor-pointer hover:border-green-300 transition-all duration-200 min-h-[80px]"
+                      className="flex items.center p-4 rounded-xl border-2 border-gray-200 bg-white cursor-pointer hover:border-green-300 transition-all duration-200 min-h-[80px]"
                     >
                       <input
                         type="checkbox"
@@ -434,14 +400,12 @@ export default function CustomDrinkBuilder() {
               </div>
             )}
 
-            {/* Step 3: Review */}
             {currentStep === 3 && (
               <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <CheckIcon className="h-6 w-6 text-green-500 mr-3" />
-                  Review Your Drink
+                  {t('review')}
                 </h2>
-                
                 <div className="space-y-4">
                   <div className="bg-gray-50 p-4 rounded-xl">
                     <h3 className="font-semibold text-lg text-gray-900 mb-2">{customDrink.name}</h3>
@@ -466,10 +430,9 @@ export default function CustomDrinkBuilder() {
                       )}
                     </div>
                   </div>
-                  
                   <div className="bg-rose-50 p-4 rounded-xl">
                     <div className="flex justify-between items-center">
-                      <span className="text-lg font-semibold text-gray-900">Total Price:</span>
+                      <span className="text-lg font-semibold text-gray-900">{t('total_price')}</span>
                       <span className="text-2xl font-bold text-rose-600">${calculateTotalPrice().toFixed(2)}</span>
                     </div>
                   </div>
@@ -477,7 +440,6 @@ export default function CustomDrinkBuilder() {
               </div>
             )}
 
-            {/* Navigation Buttons */}
             <div className="flex justify-between">
               <button
                 onClick={prevStep}
@@ -485,15 +447,14 @@ export default function CustomDrinkBuilder() {
                 className="flex items-center px-4 py-3 bg-gray-200 text-gray-700 rounded-xl hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors min-h-[48px]"
               >
                 <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                Previous
+                {t('previous')}
               </button>
-              
               {currentStep < 3 ? (
                 <button
                   onClick={nextStep}
                   className="flex items-center px-4 py-3 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-colors min-h-[48px]"
                 >
-                  Next
+                  {t('next')}
                   <ArrowRightIcon className="h-4 w-4 ml-2" />
                 </button>
               ) : (
@@ -502,20 +463,18 @@ export default function CustomDrinkBuilder() {
                   disabled={isSaving || !customDrink.name || !customDrink.baseFlavor || !customDrink.secondaryFlavor}
                   className="flex items-center px-6 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-xl min-h-[48px]"
                 >
-                  {isSaving ? 'Adding to Cart...' : 'Add to Cart'}
+                  {isSaving ? t('adding_to_cart') : t('add_to_cart')}
                 </button>
               )}
             </div>
           </div>
 
-          {/* Mobile Preview - Sticky on mobile */}
           <div className="lg:col-span-1">
             <div className="sticky top-24">
               <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-lg">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
                   Your Custom Drink Preview
                 </h3>
-                
                 <div className="flex justify-center mb-4">
                   <div className="relative w-32 h-32 sm:w-40 sm:h-40">
                     <canvas
@@ -526,7 +485,6 @@ export default function CustomDrinkBuilder() {
                     />
                   </div>
                 </div>
-                
                 <div className="text-center space-y-2">
                   <h4 className="text-lg font-semibold text-gray-900">
                     {customDrink.name || 'My Custom Drink'}
@@ -546,3 +504,5 @@ export default function CustomDrinkBuilder() {
     </div>
   )
 }
+
+

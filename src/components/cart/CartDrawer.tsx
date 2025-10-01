@@ -7,8 +7,11 @@ import { useCart } from '@/components/providers/CartProvider'
 import { useAuth } from '@/components/providers/AuthProvider'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { Link as I18nLink } from '@/i18n/routing'
 
 export default function CartDrawer() {
+  const t = useTranslations('common')
   const { 
     items, 
     total, 
@@ -63,7 +66,7 @@ export default function CartDrawer() {
                     <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
                       <div className="flex items-start justify-between">
                         <Dialog.Title className="text-lg font-medium text-gray-900">
-                          Shopping Cart ({itemCount})
+                          {t('brand')} ({itemCount})
                         </Dialog.Title>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -86,15 +89,15 @@ export default function CartDrawer() {
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
                                 </svg>
                               </div>
-                              <h3 className="text-lg font-medium text-gray-900 mb-2">Your cart is empty</h3>
-                              <p className="text-gray-500 mb-6">Start adding some delicious drinks to your cart!</p>
-                              <Link
+                              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('cart_empty')}</h3>
+                              <p className="text-gray-500 mb-6">{t('cart_empty_hint')}</p>
+                              <I18nLink
                                 href="/shop"
                                 className="btn btn-primary"
                                 onClick={closeCart}
                               >
-                                Continue Shopping
-                              </Link>
+                                {t('continue_shopping')}
+                              </I18nLink>
                             </div>
                           ) : (
                             <ul className="-my-6 divide-y divide-gray-200">
@@ -114,9 +117,9 @@ export default function CartDrawer() {
                                     <div>
                                       <div className="flex justify-between text-base font-medium text-gray-900">
                                         <h3>
-                                          <Link href={`/products/${item.productId}`} onClick={closeCart}>
+                                          <I18nLink href={{ pathname: '/products/[slug]', params: { slug: String(item.productId) } }} onClick={closeCart}>
                                             {item.name}
-                                          </Link>
+                                          </I18nLink>
                                         </h3>
                                         <p className="ml-4">${item.price.toFixed(2)}</p>
                                       </div>
@@ -129,7 +132,7 @@ export default function CartDrawer() {
                                         >
                                           <MinusIcon className="h-4 w-4" />
                                         </button>
-                                        <span className="text-gray-500">Qty {item.quantity}</span>
+                                        <span className="text-gray-500">{t('quantity')} {item.quantity}</span>
                                         <button
                                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
                                           className="p-1 text-gray-400 hover:text-gray-600"
@@ -160,26 +163,24 @@ export default function CartDrawer() {
                     {items.length > 0 && (
                       <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                         <div className="flex justify-between text-base font-medium text-gray-900 mb-4">
-                          <p>Subtotal</p>
+                          <p>{t('subtotal')}</p>
                           <p>${total.toFixed(2)}</p>
                         </div>
-                        <p className="mt-0.5 text-sm text-gray-500">
-                          Shipping and taxes calculated at checkout.
-                        </p>
+                        <p className="mt-0.5 text-sm text-gray-500">&nbsp;</p>
                         <div className="mt-6 space-y-3">
                           <button
                             onClick={handleCheckout}
                             className="btn btn-primary w-full"
                           >
-                            {user ? 'Checkout' : 'Sign in to Checkout'}
+                            {user ? t('checkout') : t('sign_in_to_checkout')}
                           </button>
-                          <Link
+                          <I18nLink
                             href="/shop"
                             className="btn btn-outline w-full"
                             onClick={closeCart}
                           >
-                            Continue Shopping
-                          </Link>
+                            {t('continue_shopping')}
+                          </I18nLink>
                         </div>
                       </div>
                     )}

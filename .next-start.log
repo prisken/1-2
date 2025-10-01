@@ -1,0 +1,12 @@
+
+> half-drinks-website@0.1.0 start
+> next start -p 3022
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:3022
+
+ ⚠ Invalid next.config.js options detected: 
+ ⚠     "env._next_intl_trailing_slash" is missing, expected string
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+ ✓ Ready in 159ms

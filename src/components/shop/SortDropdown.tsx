@@ -2,15 +2,16 @@
 
 import { Fragment } from 'react'
 import { Listbox, Transition } from '@headlessui/react'
+import { useTranslations } from 'next-intl'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
 
 const sortOptions = [
-  { value: 'createdAt', order: 'desc', label: 'Newest First' },
-  { value: 'createdAt', order: 'asc', label: 'Oldest First' },
-  { value: 'price', order: 'asc', label: 'Price: Low to High' },
-  { value: 'price', order: 'desc', label: 'Price: High to Low' },
-  { value: 'name', order: 'asc', label: 'Name: A to Z' },
-  { value: 'name', order: 'desc', label: 'Name: Z to A' },
+  { value: 'createdAt', order: 'desc', key: 'newest_first' },
+  { value: 'createdAt', order: 'asc', key: 'oldest_first' },
+  { value: 'price', order: 'asc', key: 'price_low_high' },
+  { value: 'price', order: 'desc', key: 'price_high_low' },
+  { value: 'name', order: 'asc', key: 'name_a_z' },
+  { value: 'name', order: 'desc', key: 'name_z_a' },
 ]
 
 interface SortDropdownProps {
@@ -20,6 +21,7 @@ interface SortDropdownProps {
 }
 
 export default function SortDropdown({ sortBy, sortOrder, onSortChange }: SortDropdownProps) {
+  const t = useTranslations('shop')
   const selectedOption = sortOptions.find(
     option => option.value === sortBy && option.order === sortOrder
   ) || sortOptions[0]
@@ -32,7 +34,7 @@ export default function SortDropdown({ sortBy, sortOrder, onSortChange }: SortDr
     <Listbox value={selectedOption} onChange={handleChange}>
       <div className="relative">
         <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm border border-gray-300">
-          <span className="block truncate">{selectedOption.label}</span>
+          <span className="block truncate">{t(selectedOption.key)}</span>
           <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
             <ChevronUpDownIcon
               className="h-5 w-5 text-gray-400"
@@ -64,7 +66,7 @@ export default function SortDropdown({ sortBy, sortOrder, onSortChange }: SortDr
                         selected ? 'font-medium' : 'font-normal'
                       }`}
                     >
-                      {option.label}
+                      {t(option.key)}
                     </span>
                     {selected ? (
                       <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">

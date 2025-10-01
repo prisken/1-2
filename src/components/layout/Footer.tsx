@@ -1,4 +1,5 @@
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
+import { useTranslations } from 'next-intl'
 import { 
   EnvelopeIcon, 
   PhoneIcon, 
@@ -10,6 +11,7 @@ import {
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 
 export default function Footer() {
+  const t = useTranslations()
   const currentYear = new Date().getFullYear()
 
   const footerLinks = {
@@ -60,15 +62,15 @@ export default function Footer() {
               </div>
               <div>
                 <h3 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
-                  1/2 Drinks
+                  {t('common.brand')}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-600">Handcrafted with Love</p>
+                <p className="text-xs sm:text-sm text-gray-600">{t('common.tagline')}</p>
               </div>
             </div>
             
             <p className="text-gray-600 leading-relaxed text-sm sm:text-base max-w-md">
-              Creating beautiful, healthy beverages for the modern woman. 
-              Every drink is crafted with love and the finest ingredients.
+              {/* Keep brief description static or translate later */}
+              {t('home.hero_desc')}
             </p>
             
             <div className="flex items-center space-x-4">
@@ -79,7 +81,7 @@ export default function Footer() {
                 <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
                 <StarIcon className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-400" />
               </div>
-              <span className="text-xs sm:text-sm text-gray-600">4.9/5 from 500+ reviews</span>
+              <span className="text-xs sm:text-sm text-gray-600">4.9/5</span>
             </div>
 
             {/* Contact Info - Mobile optimized */}
@@ -101,12 +103,12 @@ export default function Footer() {
 
           {/* Shop Links - Mobile optimized */}
           <div>
-            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Shop</h4>
+            <h4 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">{t('common.shop')}</h4>
             <ul className="space-y-2 sm:space-y-3">
               {footerLinks.shop.map((link) => (
                 <li key={link.name}>
                   <Link 
-                    href={link.href}
+                    href={link.href as '/' | '/shop' | '/custom'}
                     className="text-gray-600 hover:text-rose-600 transition-colors duration-300 text-sm sm:text-base block py-1"
                   >
                     {link.name}
@@ -123,7 +125,7 @@ export default function Footer() {
               {footerLinks.company.map((link) => (
                 <li key={link.name}>
                   <Link 
-                    href={link.href}
+                    href={link.href as '/' | '/about'}
                     className="text-gray-600 hover:text-rose-600 transition-colors duration-300 text-sm sm:text-base block py-1"
                   >
                     {link.name}
@@ -140,7 +142,7 @@ export default function Footer() {
               {footerLinks.support.map((link) => (
                 <li key={link.name}>
                   <Link 
-                    href={link.href}
+                    href={link.href as '/' | '/faq' | '/shipping' | '/returns'}
                     className="text-gray-600 hover:text-rose-600 transition-colors duration-300 text-sm sm:text-base block py-1"
                   >
                     {link.name}
@@ -182,7 +184,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
             <div className="flex items-center space-x-4 md:space-x-6">
               <p className="text-gray-600 text-xs sm:text-sm text-center md:text-left">
-                © {currentYear} 1/2 Drinks. Made with <HeartIcon className="h-3 w-3 sm:h-4 sm:w-4 text-rose-500 inline" /> for you.
+                © {currentYear} {t('common.brand')}
               </p>
             </div>
             
@@ -190,7 +192,7 @@ export default function Footer() {
               {footerLinks.legal.map((link) => (
                 <Link 
                   key={link.name}
-                  href={link.href}
+                  href={link.href as '/' | '/privacy' | '/terms' | '/cookies' | '/accessibility'}
                   className="text-xs sm:text-sm text-gray-600 hover:text-rose-600 transition-colors duration-300"
                 >
                   {link.name}

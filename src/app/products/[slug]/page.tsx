@@ -8,6 +8,7 @@ import { HeartIcon as HeartOutlineIcon } from '@heroicons/react/24/outline'
 import { StarIcon, TruckIcon, ShieldCheckIcon, ArrowPathIcon } from '@heroicons/react/24/solid'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import toast from 'react-hot-toast'
+import { useTranslations } from 'next-intl'
 
 interface Product {
   id: string
@@ -23,6 +24,7 @@ interface Product {
 }
 
 export default function ProductPage() {
+  const t = useTranslations()
   const params = useParams()
   const slug = params?.slug as string
   
@@ -48,11 +50,11 @@ export default function ProductPage() {
         const data = await response.json()
         setProduct(data)
       } else {
-        toast.error('Product not found')
+        toast.error(t('product.not_found'))
       }
     } catch (error) {
       console.error('Error fetching product:', error)
-      toast.error('Failed to load product')
+      toast.error(t('product.not_found'))
     } finally {
       setLoading(false)
     }
@@ -72,9 +74,9 @@ export default function ProductPage() {
       }
       
       addItem(cartItem)
-      toast.success(`${product.name} added to cart!`)
+      toast.success(`${product.name} ${t('product.add_to_cart')}`)
     } catch (error) {
-      toast.error('Failed to add item to cart')
+      toast.error(t('product.failed'))
     } finally {
       setIsAddingToCart(false)
     }
@@ -92,13 +94,13 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
-          <p className="text-gray-600 mb-8">The product you're looking for doesn't exist.</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('product.not_found')}</h1>
+          <p className="text-gray-600 mb-8">{t('product.not_found_hint')}</p>
           <button
             onClick={() => window.history.back()}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Go Back
+            {t('product.go_back')}
           </button>
         </div>
       </div>
@@ -157,7 +159,7 @@ export default function ProductPage() {
                     />
                   ))}
                   <span className="ml-2 text-sm text-gray-600">
-                    ({product.reviewCount} reviews)
+                    ({product.reviewCount} {t('product.reviews')})
                   </span>
                 </div>
                 <button
@@ -201,7 +203,7 @@ export default function ProductPage() {
                 disabled={!product.inStock || isAddingToCart}
                 className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
-                {isAddingToCart ? 'Adding to Cart...' : 'Add to Cart'}
+                {isAddingToCart ? t('product.adding_to_cart') : t('product.add_to_cart')}
               </button>
             </div>
 
@@ -210,22 +212,22 @@ export default function ProductPage() {
               <div className="flex items-center space-x-3">
                 <TruckIcon className="h-6 w-6 text-green-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Free Shipping</p>
-                  <p className="text-sm text-gray-600">On orders over $25</p>
+                  <p className="font-medium text-gray-900">{t('product.free_shipping')}</p>
+                  <p className="text-sm text-gray-600">{t('product.on_orders_over')}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <ShieldCheckIcon className="h-6 w-6 text-green-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Quality Guarantee</p>
-                  <p className="text-sm text-gray-600">Fresh ingredients</p>
+                  <p className="font-medium text-gray-900">{t('product.quality_guarantee')}</p>
+                  <p className="text-sm text-gray-600">{t('product.fresh_ingredients')}</p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
                 <ArrowPathIcon className="h-6 w-6 text-green-600" />
                 <div>
-                  <p className="font-medium text-gray-900">Easy Returns</p>
-                  <p className="text-sm text-gray-600">30-day return policy</p>
+                  <p className="font-medium text-gray-900">{t('product.easy_returns')}</p>
+                  <p className="text-sm text-gray-600">{t('product.return_policy')}</p>
                 </div>
               </div>
             </div>
@@ -235,7 +237,7 @@ export default function ProductPage() {
         {/* Related Products */}
         {product.relatedProducts && product.relatedProducts.length > 0 && (
           <div className="mt-16">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">Related Products</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-8">{t('product.related_products')}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {product.relatedProducts.map((relatedProduct) => (
                 <div key={relatedProduct.id} className="bg-white rounded-lg shadow-md overflow-hidden">

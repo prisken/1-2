@@ -16,25 +16,12 @@ import {
   ArrowRightIcon,
   PlayIcon
 } from '@heroicons/react/24/outline'
+import { useTranslations } from 'next-intl'
+import {unstable_setRequestLocale} from 'next-intl/server'
 
-export const metadata = {
-  title: 'About Us - 1/2 Drinks',
-  description: 'Learn about the story, mission, and values behind 1/2 Drinks. Discover our journey of creating healthy, beautiful beverages for modern women.',
-  keywords: 'about us, 1/2 drinks story, healthy beverages, handmade drinks, company mission',
-  openGraph: {
-    title: 'About Us - 1/2 Drinks',
-    description: 'Learn about the story, mission, and values behind 1/2 Drinks. Discover our journey of creating healthy, beautiful beverages for modern women.',
-    type: 'website',
-    locale: 'en_US',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'About Us - 1/2 Drinks',
-    description: 'Learn about the story, mission, and values behind 1/2 Drinks. Discover our journey of creating healthy, beautiful beverages for modern women.',
-  },
-}
-
-export default function AboutPage() {
+export default function AboutPage({params}: {params: {locale: string}}) {
+  unstable_setRequestLocale(params.locale)
+  const t = useTranslations('about')
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-purple-50">
       {/* Hero Section */}
@@ -50,19 +37,19 @@ export default function AboutPage() {
           <div className="text-center space-y-6 md:space-y-8">
             <div className="inline-flex items-center px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full text-rose-600 font-semibold text-sm">
               <HeartIcon className="h-4 w-4 mr-2" />
-              Our Story
+              {t('our_story')}
             </div>
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 bg-clip-text text-transparent leading-tight">
-              Crafting Healthy
+              {t('crafting_healthy')}
               <br />
-              <span className="text-rose-500">Beautiful</span>
+              <span className="text-rose-500">{t('beautiful')}</span>
               <br />
-              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">Beverages</span>
+              <span className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl">{t('beverages')}</span>
             </h1>
             
             <p className="text-base sm:text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto">
-              Born from a passion for wellness and a love for vibrant flavors, 1/2 Drinks started with a simple idea: to make healthy choices exciting and accessible for the modern woman.
+              {t('intro')}
             </p>
           </div>
         </div>
@@ -76,13 +63,13 @@ export default function AboutPage() {
             <div className="space-y-6 md:space-y-8">
               <div>
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
-                  The 1/2 Drinks Journey
+                  {t('journey')}
                 </h2>
                 <p className="text-base sm:text-lg text-gray-700 leading-relaxed mb-4">
-                  Our unique two-tone beverages are a testament to our philosophy of blending complementary flavors and colors into a single, harmonious drink. Every bottle is a small work of art, crafted with fresh, high-quality ingredients and a whole lot of love.
+                  {t('journey_desc1')}
                 </p>
                 <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  We believe that what you drink should not only nourish your body but also delight your senses. That's why we've dedicated ourselves to creating beverages that are as beautiful as they are beneficial.
+                  {t('journey_desc2')}
                 </p>
               </div>
 
@@ -131,10 +118,10 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 md:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6">
-              Our Mission & Values
+              {t('mission_values')}
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-              Dedicated to quality, creativity, and your well-being. Every decision we make is guided by our core values.
+              {t('journey_desc2')}
             </p>
           </div>
 
@@ -142,37 +129,37 @@ export default function AboutPage() {
             {[
               {
                 icon: <ShieldCheckIcon className="h-8 w-8 text-blue-600" />,
-                title: "Quality Ingredients",
+                title: t('quality_ingredients'),
                 description: "We source only the freshest fruits, vegetables, and natural superfoods to ensure every sip is packed with goodness.",
                 color: "from-blue-100 to-blue-200"
               },
               {
                 icon: <LightBulbIcon className="h-8 w-8 text-purple-600" />,
-                title: "Creative Blends",
+                title: t('creative_blends'),
                 description: "Innovation is at our core. We constantly experiment to bring you exciting and unique flavor combinations.",
                 color: "from-purple-100 to-purple-200"
               },
               {
                 icon: <HeartIcon className="h-8 w-8 text-pink-600" />,
-                title: "Customer Well-being",
+                title: t('customer_wellbeing'),
                 description: "Your health and happiness are our top priorities. We craft drinks that make you feel good, inside and out.",
                 color: "from-pink-100 to-pink-200"
               },
               {
                 icon: <GlobeAltIcon className="h-8 w-8 text-green-600" />,
-                title: "Sustainability",
+                title: t('sustainability'),
                 description: "We're committed to eco-friendly practices, from sourcing to packaging, to protect our planet for future generations.",
                 color: "from-green-100 to-green-200"
               },
               {
                 icon: <UserGroupIcon className="h-8 w-8 text-orange-600" />,
-                title: "Community First",
+                title: t('community_first'),
                 description: "We believe in building a community of health-conscious individuals who support and inspire each other.",
                 color: "from-orange-100 to-orange-200"
               },
               {
                 icon: <SparklesIcon className="h-8 w-8 text-yellow-600" />,
-                title: "Beauty in Every Sip",
+                title: t('beauty_in_every_sip'),
                 description: "We believe that healthy drinks should be as beautiful as they are nutritious, bringing joy to your daily routine.",
                 color: "from-yellow-100 to-yellow-200"
               }
@@ -194,7 +181,7 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8 md:mb-16">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 md:mb-6">
-              Meet Our Team
+              {t('team')}
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-rose-100 max-w-3xl mx-auto">
               The passionate people behind 1/2 Drinks, dedicated to bringing you the best healthy beverages.
@@ -234,90 +221,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      {/* Why Choose Us */}
-      <section className="py-12 md:py-20 bg-white/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 md:mb-6">
-              Why Office Ladies
-              <br className="sm:hidden" />
-              <span className="text-rose-500"> Choose Us</span>
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-              We understand the unique needs of modern professional women and have designed our products and services accordingly.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {[
-              {
-                icon: <TruckIcon className="h-8 w-8 text-rose-600" />,
-                title: "Office Delivery",
-                description: "Fresh drinks delivered directly to your workplace within 30 minutes",
-                color: "from-rose-100 to-pink-200"
-              },
-              {
-                icon: <GiftIcon className="h-8 w-8 text-purple-600" />,
-                title: "Custom Orders",
-                description: "Create your perfect drink with our easy-to-use custom builder",
-                color: "from-purple-100 to-purple-200"
-              },
-              {
-                icon: <ShieldCheckIcon className="h-8 w-8 text-green-600" />,
-                title: "Health Focused",
-                description: "Every ingredient is carefully selected for maximum health benefits",
-                color: "from-green-100 to-green-200"
-              },
-              {
-                icon: <StarIcon className="h-8 w-8 text-yellow-600" />,
-                title: "Premium Quality",
-                description: "We never compromise on quality, ensuring every drink is perfect",
-                color: "from-yellow-100 to-yellow-200"
-              }
-            ].map((feature, index) => (
-              <div key={index} className={`bg-gradient-to-br ${feature.color} p-6 md:p-8 rounded-2xl md:rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-center`}>
-                <div className="flex items-center justify-center w-16 h-16 bg-white/80 backdrop-blur-sm rounded-2xl mb-4 md:mb-6 mx-auto">
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4">{feature.title}</h3>
-                <p className="text-sm md:text-base text-gray-700 leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-12 md:py-20 bg-gradient-to-r from-rose-500 via-pink-500 to-purple-500 text-white">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <div className="space-y-6 md:space-y-8">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold">
-              Ready to Experience
-              <br />
-              <span className="text-yellow-300">Something Special?</span>
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-rose-100 max-w-2xl mx-auto">
-              Join thousands of satisfied customers who have discovered their perfect drink with us.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-              <a 
-                href="/shop"
-                className="inline-flex items-center justify-center px-6 py-4 bg-white text-rose-600 font-semibold rounded-2xl hover:bg-rose-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-base min-h-[48px]"
-              >
-                Shop Our Collection
-                <ArrowRightIcon className="h-5 w-5 ml-2" />
-              </a>
-              <a 
-                href="/custom"
-                className="inline-flex items-center justify-center px-6 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-2xl border-2 border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl text-base min-h-[48px]"
-              >
-                Create Custom Drink
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   )
 }
+
+

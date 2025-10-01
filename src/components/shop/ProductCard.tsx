@@ -1,6 +1,7 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/routing'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { StarIcon, HeartIcon } from '@heroicons/react/24/solid'
 import { HeartIcon as HeartOutlineIcon } from '@heroicons/react/24/outline'
@@ -27,6 +28,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const t = useTranslations('common')
   const [isFavorite, setIsFavorite] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const { addItem } = useCart()
@@ -41,9 +43,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         quantity: 1,
         image: product.images?.[0] || '/images/placeholder-drink.svg',
       })
-      toast.success(`${product.name} added to cart!`)
+      toast.success(`${product.name} ${t('add_to_cart')}`)
     } catch (error) {
-      toast.error('Failed to add item to cart')
+      toast.error('Error')
     } finally {
       setIsAddingToCart(false)
     }
@@ -62,7 +64,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
       {/* Product Image */}
       <div className="relative h-64 overflow-hidden">
-        <Link href={`/products/${product.slug}`}>
+        <Link href={{ pathname: '/products/[slug]', params: { slug: product.slug } }}>
           <Image
             src={product.images?.[0] || '/images/placeholder-drink.svg'}
             alt={product.name}
@@ -86,7 +88,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Discount Badge */}
         {discountPercentage > 0 && (
           <div className="absolute top-4 left-4 bg-red-500 text-white px-2 py-1 rounded-full text-sm font-semibold z-10">
-            {discountPercentage}% OFF
+            {discountPercentage}{" "}{useTranslations('shop')('off')}
           </div>
         )}
 
@@ -98,7 +100,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
       {/* Product Info */}
       <div className="p-6">
-        <Link href={`/products/${product.slug}`}>
+        <Link href={{ pathname: '/products/[slug]', params: { slug: product.slug } }}>
           <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
             {product.name}
           </h3>
@@ -168,7 +170,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           disabled={isAddingToCart}
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isAddingToCart ? 'Adding...' : 'Add to Cart'}
+          {isAddingToCart ? t('adding') : t('add_to_cart')}
         </button>
       </div>
     </div>

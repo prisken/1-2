@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { Link } from '@/i18n/routing'
+import { useRouter } from '@/i18n/routing'
+import { useTranslations } from 'next-intl'
+import LanguageSwitcher from '@/components/layout/LanguageSwitcher'
 import { 
   Bars3Icon, 
   XMarkIcon, 
@@ -19,13 +21,14 @@ import CartDrawer from '@/components/cart/CartDrawer'
 import AuthModal from '@/components/auth/AuthModal'
 
 const navigation = [
-  { name: 'Home', href: '/', icon: '🏠' },
-  { name: 'Shop', href: '/shop', icon: '🛍️' },
-  { name: 'Custom', href: '/custom', icon: '✨' },
-  { name: 'About', href: '/about', icon: '💖' },
+  { key: 'common.home', href: '/', icon: '🏠' },
+  { key: 'common.shop', href: '/shop', icon: '🛍️' },
+  { key: 'common.custom', href: '/custom', icon: '✨' },
+  { key: 'common.about', href: '/about', icon: '💖' },
 ]
 
 export default function Header() {
+  const t = useTranslations()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const { user, logout } = useAuth()
@@ -58,7 +61,7 @@ export default function Header() {
                 <span className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-transparent">
                   1/2 Drinks
                 </span>
-                <span className="text-xs text-gray-500 -mt-1 hidden sm:block">Handcrafted with Love</span>
+                <span className="text-xs text-gray-500 -mt-1 hidden sm:block">{t('common.tagline')}</span>
               </div>
             </Link>
           </div>
@@ -67,12 +70,12 @@ export default function Header() {
           <div className="hidden lg:flex lg:gap-x-6">
             {navigation.map((item) => (
               <Link
-                key={item.name}
-                href={item.href}
+                key={item.key}
+                href={item.href as '/' | '/about' | '/shop' | '/custom'}
                 className="group flex items-center space-x-2 px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300"
               >
                 <span className="text-lg group-hover:scale-110 transition-transform duration-300">{item.icon}</span>
-                <span>{item.name}</span>
+                <span>{t(item.key)}</span>
               </Link>
             ))}
           </div>
@@ -110,7 +113,7 @@ export default function Header() {
                   onClick={handleLogout}
                   className="px-3 py-2 text-sm font-medium text-gray-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-300 min-h-[44px]"
                 >
-                  <span className="hidden sm:inline">Logout</span>
+                <span className="hidden sm:inline">{t('common.logout')}</span>
                   <span className="sm:hidden">👤</span>
                 </button>
               </div>
@@ -120,7 +123,7 @@ export default function Header() {
                 className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 min-h-[44px]"
               >
                 <UserIcon className="h-4 w-4" />
-                <span className="hidden sm:inline text-sm">Login</span>
+                <span className="hidden sm:inline text-sm">{t('common.login')}</span>
               </button>
             )}
 
@@ -132,6 +135,9 @@ export default function Header() {
             >
               <Bars3Icon className="h-6 w-6" />
             </button>
+
+            {/* Language Switcher */}
+            <LanguageSwitcher />
           </div>
         </nav>
 
@@ -145,7 +151,7 @@ export default function Header() {
                   <div className="w-8 h-8 bg-gradient-to-br from-rose-500 to-pink-500 rounded-lg flex items-center justify-center">
                     <HeartSolidIcon className="h-5 w-5 text-white" />
                   </div>
-                  <span className="text-xl font-bold text-gray-900">1/2 Drinks</span>
+                  <span className="text-xl font-bold text-gray-900">{t('common.brand')}</span>
                 </div>
                 <button
                   type="button"
@@ -159,13 +165,13 @@ export default function Header() {
               <div className="px-4 py-6 space-y-2">
                 {navigation.map((item) => (
                   <Link
-                    key={item.name}
-                    href={item.href}
+                    key={item.key}
+                    href={item.href as '/' | '/about' | '/shop' | '/custom'}
                     className="flex items-center space-x-3 px-4 py-4 rounded-xl text-base font-medium text-gray-700 hover:bg-rose-50 hover:text-rose-600 transition-all duration-300 min-h-[56px]"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <span className="text-xl">{item.icon}</span>
-                    <span>{item.name}</span>
+                    <span>{t(item.key)}</span>
                   </Link>
                 ))}
                 
@@ -182,7 +188,7 @@ export default function Header() {
                         onClick={handleLogout}
                         className="w-full px-4 py-4 text-left text-base font-medium text-gray-700 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all duration-300 min-h-[56px]"
                       >
-                        Logout
+                        {t('common.logout')}
                       </button>
                     </div>
                   ) : (
@@ -194,7 +200,7 @@ export default function Header() {
                       className="w-full flex items-center justify-center space-x-2 px-4 py-4 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-semibold rounded-xl hover:from-rose-600 hover:to-pink-600 transition-all duration-300 min-h-[56px]"
                     >
                       <UserIcon className="h-4 w-4" />
-                      <span>Login</span>
+                      <span>{t('common.login')}</span>
                     </button>
                   )}
                 </div>
