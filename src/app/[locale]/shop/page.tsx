@@ -59,6 +59,7 @@ export default function ShopPage() {
     sortBy: searchParams.get('sortBy') || 'createdAt',
     sortOrder: searchParams.get('sortOrder') || 'desc'
   })
+  const [tempFilters, setTempFilters] = useState<typeof filters | null>(null)
 
   useEffect(() => {
     fetchProducts()
@@ -97,6 +98,16 @@ export default function ShopPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const categories = [
+    { value: '', labelKey: 'all_categories' },
+    { value: 'SMOOTHIES', labelKey: 'cat_smoothies' },
+    { value: 'JUICES', labelKey: 'cat_juices' },
+    { value: 'TEAS', labelKey: 'cat_teas' },
+    { value: 'COFFEE', labelKey: 'cat_coffee' },
+    { value: 'ENERGY_DRINKS', labelKey: 'cat_energy' },
+    { value: 'CUSTOM', labelKey: 'cat_custom' },
+  ]
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow-sm border-b border-gray-200">
@@ -122,7 +133,10 @@ export default function ShopPage() {
               />
             </div>
             <button
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              onClick={() => {
+                setTempFilters(filters)
+                setShowMobileFilters(true)
+              }}
               className="flex items-center space-x-2 px-4 py-3 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition-colors min-h-[48px]"
             >
               <FunnelIcon className="h-5 w-5" />
@@ -130,25 +144,58 @@ export default function ShopPage() {
             </button>
           </div>
         </div>
+        <div className="lg:hidden border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 py-2 overflow-x-auto">
+            <div className="flex gap-2 min-w-full">
+              {categories.map(cat => (
+                <button
+                  key={cat.value}
+                  onClick={() => handleFilterChange({ category: cat.value })}
+                  className={`whitespace-nowrap px-3 py-2 rounded-full text-sm border ${
+                    (filters.category === cat.value)
+                      ? 'bg-rose-600 text-white border-rose-600'
+                      : 'bg-white text-gray-700 border-gray-300'
+                  }`}
+                >
+                  {t(cat.labelKey)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {showMobileFilters && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50" onClick={() => setShowMobileFilters(false)}>
-          <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl">
+        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setShowMobileFilters(false)}>
+          <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">{t('filters')}</h3>
               <button onClick={() => setShowMobileFilters(false)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg">
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
-            <div className="p-4">
+            <div className="flex-1 overflow-y-auto p-4 pb-24">
               <FilterSidebar 
-                filters={filters} 
-                onFilterChange={(newFilters) => {
-                  handleFilterChange(newFilters)
-                  setShowMobileFilters(false)
-                }} 
+                filters={tempFilters || filters} 
+                onFilterChange={(newFilters) => setTempFilters(prev => ({ ...(prev || filters), ...newFilters }))} 
               />
+            </div>
+            <div className="fixed bottom-0 right-0 w-full max-w-sm bg-white border-t border-gray-200 p-4 flex items-center justify-between gap-3">
+              <button
+                onClick={() => setTempFilters({ ...filters, category: '', search: '', minPrice: '', maxPrice: '' })}
+                className="px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium w-1/3"
+              >
+                {t('clear_all')}
+              </button>
+              <button
+                onClick={() => {
+                  if (tempFilters) handleFilterChange(tempFilters)
+                  setShowMobileFilters(false)
+                }}
+                className="px-4 py-3 rounded-xl bg-rose-600 text-white font-semibold flex-1"
+              >
+                {t('apply') || 'Apply'}
+              </button>
             </div>
           </div>
         </div>

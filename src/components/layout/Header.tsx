@@ -175,6 +175,30 @@ export default function Header() {
                   </Link>
                 ))}
                 
+                {/* Quick shop categories */}
+                <div className="pt-4">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">{t('shop_by_category') || 'Shop by category'}</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { value: '', label: t('shop.all_categories') },
+                      { value: 'SMOOTHIES', label: t('shop.cat_smoothies') },
+                      { value: 'JUICES', label: t('shop.cat_juices') },
+                      { value: 'TEAS', label: t('shop.cat_teas') },
+                      { value: 'COFFEE', label: t('shop.cat_coffee') },
+                      { value: 'ENERGY_DRINKS', label: t('shop.cat_energy') },
+                    ].map(cat => (
+                      <Link
+                        key={cat.value}
+                        href={{ pathname: '/shop', query: cat.value ? { category: cat.value } : {} } as any}
+                        className="px-3 py-2 rounded-full text-sm border border-gray-300 text-gray-700 hover:border-rose-400 hover:text-rose-600"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {cat.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+
                 <div className="pt-4 border-t border-gray-200">
                   {user ? (
                     <div className="space-y-3">
