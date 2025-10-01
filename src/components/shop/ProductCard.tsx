@@ -168,7 +168,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           onClick={handleAddToCart}
           disabled={isAddingToCart}
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full btn-primary min-h-[48px]"
         >
           {isAddingToCart ? t('adding') : t('add_to_cart')}
         </button>

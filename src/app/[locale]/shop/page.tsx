@@ -230,6 +230,18 @@ export default function ShopPage() {
           </div>
         </div>
       </div>
+
+      {/* Floating Filter pill on mobile */}
+      <div className="lg:hidden fixed bottom-20 right-4 z-50">
+        <button
+          aria-label="Open filters"
+          onClick={() => setShowMobileFilters(true)}
+          className="shadow-lg inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-600 text-white text-sm font-semibold hover:bg-rose-700"
+        >
+          <FunnelIcon className="h-5 w-5" />
+          Filter
+        </button>
+      </div>
     </div>
   )
 }

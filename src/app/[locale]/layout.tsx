@@ -7,6 +7,8 @@ import ClientOnly from '@/components/ClientOnly'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import CartDrawer from '@/components/cart/CartDrawer'
+import BottomNav from '@/components/layout/BottomNav'
+import OnboardingTooltip from '@/components/ui/OnboardingTooltip'
 import { Toaster } from 'react-hot-toast'
 import {NextIntlClientProvider} from 'next-intl'
 import {getMessages, unstable_setRequestLocale} from 'next-intl/server'
@@ -53,6 +55,8 @@ export default async function LocaleLayout({
             <Header />
             {children}
             <Footer />
+            <BottomNav />
+            <OnboardingTooltip />
             <CartDrawer />
           </CartProvider>
         </AuthProvider>

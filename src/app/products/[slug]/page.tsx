@@ -34,6 +34,7 @@ export default function ProductPage() {
   const [quantity, setQuantity] = useState(1)
   const [isFavorite, setIsFavorite] = useState(false)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
+  const [showStickyBar, setShowStickyBar] = useState(false)
   
   const { addItem } = useCart()
 
@@ -42,6 +43,15 @@ export default function ProductPage() {
       fetchProduct()
     }
   }, [slug])
+
+  useEffect(() => {
+    const onScroll = () => {
+      const trigger = 400
+      setShowStickyBar(window.scrollY > trigger)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const fetchProduct = async () => {
     try {
@@ -108,7 +118,7 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 pt-8 pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Product Images */}
@@ -178,7 +188,7 @@ export default function ProductPage() {
             </div>
 
             {/* Quantity and Add to Cart */}
-            <div className="space-y-4">
+            <div className="space-y-4 hidden lg:block">
               <div className="flex items-center space-x-4">
                 <label className="text-sm font-medium text-gray-700">Quantity:</label>
                 <div className="flex items-center border border-gray-300 rounded-lg">
@@ -256,6 +266,33 @@ export default function ProductPage() {
           </div>
         )}
       </div>
+      {/* Sticky mobile add-to-cart */}
+      {product && (
+        <div className={`lg:hidden fixed bottom-0 inset-x-0 z-50 transition-transform ${showStickyBar ? 'translate-y-0' : 'translate-y-full'}`}>
+          <div className="bg-white/95 backdrop-blur border-t border-gray-200 px-4 py-3 safe-area-inset">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm text-gray-600 line-clamp-1">{product.name}</p>
+                <p className="text-lg font-semibold text-blue-600">${product.price.toFixed(2)}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex items-center border border-gray-300 rounded-lg">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-3 py-2 text-gray-600">-</button>
+                  <span className="px-3 py-2 border-x border-gray-300 text-sm">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="px-3 py-2 text-gray-600">+</button>
+                </div>
+                <button
+                  onClick={handleAddToCart}
+                  disabled={!product.inStock || isAddingToCart}
+                  className="btn-primary whitespace-nowrap"
+                >
+                  {isAddingToCart ? t('product.adding_to_cart') : t('product.add_to_cart')}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

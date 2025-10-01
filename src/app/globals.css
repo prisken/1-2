@@ -14,6 +14,13 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
+  /* Space for mobile bottom navigation */
+  @media (max-width: 1024px) {
+    body {
+      padding-bottom: 64px; /* height of bottom nav incl. safe area */
+    }
+  }
+  
   /* Mobile-first touch targets */
   button, a, input, select, textarea {
     min-height: 44px;
