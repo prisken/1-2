@@ -36,6 +36,15 @@ const nextConfig = {
       },
     ]
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/zh-Hant',
+        permanent: false
+      }
+    ]
+  }
 }
 
 module.exports = withNextIntl(nextConfig)
